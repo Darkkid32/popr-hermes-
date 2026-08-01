@@ -17,6 +17,7 @@ export function Sidebar() {
   const selfLinks = NAV_LINKS.filter((l) => l.group === 'self')
   const agentLinks = NAV_LINKS.filter((l) => l.group === 'agent')
   const orgLinks = NAV_LINKS.filter((l) => l.group === 'org')
+  const securityLinks = NAV_LINKS.filter((l) => l.group === 'security')
 
   const routeFor = (id: string) => {
     if (id === 'fleet') return '/hermes'
@@ -61,6 +62,25 @@ export function Sidebar() {
           <div className="sb-section">Organization</div>
           <div className="sb-nav">
             {orgLinks.map((link) => (
+              <RouterLink
+                key={link.id}
+                to={routeFor(link.id)}
+                className={'nav-item ' + (path.startsWith(routeFor(link.id)) ? 'active' : '')}
+                aria-current={path.startsWith(routeFor(link.id)) ? 'page' : undefined}
+              >
+                <span className="ico" aria-hidden="true">{link.icon || '·'}</span>
+                <span>{link.label}</span>
+              </RouterLink>
+            ))}
+          </div>
+        </>
+      )}
+
+      {securityLinks.length > 0 && (
+        <>
+          <div className="sb-section">Security</div>
+          <div className="sb-nav">
+            {securityLinks.map((link) => (
               <RouterLink
                 key={link.id}
                 to={routeFor(link.id)}

@@ -6,6 +6,7 @@ import { ToastStack } from './components/ToastStack'
 import { MissionControl } from './pages/MissionControl'
 import { LoginPage } from './pages/LoginPage'
 import { OrganizationLayout, OrganizationOverview, OrganizationMembers, OrganizationTeams, OrganizationRoles, OrganizationWorkspaces, OrganizationProjects, OrganizationEnvironments, OrganizationLicenses, OrganizationQuotas, OrganizationActivity, OrganizationSettings } from './pages/organization'
+import { SecurityLayout, SecurityOverview, SecurityUsers, SecurityRoles, SecurityApiKeys, SecuritySecrets, SecurityCertificates, SecurityPolicies, SecuritySessions, SecurityAudit, SecurityThreats, SecurityCompliance, SecuritySettings } from './pages/security'
 import { AgentWorkspaceRoute } from './pages/AgentWorkspace'
 import { Goals } from './pages/Goals'
 import { Memory } from './pages/Memory'
@@ -29,6 +30,7 @@ interface PageMeta {
 const PAGE_META: Record<string, PageMeta> = {
   '/mission': { roman: 'I', eyebrow: 'Self · Machine Control', title: 'Machine Control', sub: 'Live telemetry from the agent fleet. Everything below is a projection of a single graph.', kind: 'self' },
   '/org': { roman: 'XVII', eyebrow: 'Organization', title: 'Organization Workspace', sub: 'Members, teams, roles, workspaces, projects, environments, licenses, quotas, and the full activity trail.', kind: 'self' },
+  '/security': { roman: 'XVIII', eyebrow: 'Security', title: 'Security Workspace', sub: 'Users, roles, keys, secrets, certificates, policies, sessions, audit, threats, compliance, and security settings.', kind: 'self' },
   '/goals': { roman: 'II', eyebrow: 'Self · Goals', title: 'Goals', sub: 'Quarterly objectives. Auto-tracked from your vault, agent runtimes, and operator workflows.', kind: 'self' },
   '/memory': { roman: 'III', eyebrow: 'Self · Memory', title: 'Memory', sub: 'Your second brain. Vault, notes, Omi captures, and the live knowledge graph that connects them all.', kind: 'self' },
   '/hermes': { roman: 'IV', eyebrow: 'Agent · Hermes', title: 'Hermes', sub: 'Local-first agent. Sessions, skills, kanban, memory, and a chat line you can drive from anywhere.', kind: 'agent' },
@@ -95,6 +97,20 @@ function AppShell() {
             <Routes>
               <Route path="/" element={<MissionControl />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/security" element={<SecurityLayout />}>
+                <Route index element={<SecurityOverview />} />
+                <Route path="users" element={<SecurityUsers />} />
+                <Route path="roles" element={<SecurityRoles />} />
+                <Route path="api-keys" element={<SecurityApiKeys />} />
+                <Route path="secrets" element={<SecuritySecrets />} />
+                <Route path="certificates" element={<SecurityCertificates />} />
+                <Route path="policies" element={<SecurityPolicies />} />
+                <Route path="sessions" element={<SecuritySessions />} />
+                <Route path="audit" element={<SecurityAudit />} />
+                <Route path="threats" element={<SecurityThreats />} />
+                <Route path="compliance" element={<SecurityCompliance />} />
+                <Route path="settings" element={<SecuritySettings />} />
+              </Route>
               <Route path="/org" element={<OrganizationLayout />}>
                 <Route index element={<OrganizationOverview />} />
                 <Route path="overview" element={<OrganizationOverview />} />
