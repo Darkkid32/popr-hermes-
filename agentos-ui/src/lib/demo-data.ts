@@ -538,7 +538,7 @@ export interface NavLink {
 }
 
 export const NAV_LINKS: NavLink[] = [
-  { id: 'mission', label: 'Mission Control', icon: '◎', group: 'self' },
+  { id: 'mission', label: 'Machine Control', icon: '◎', group: 'self' },
   { id: 'goals', label: 'Goals', icon: '◈', group: 'self' },
   { id: 'memory', label: 'Memory', icon: '◉', group: 'self', badge: 'cyan' },
   { id: 'workflow', label: 'Workflow Ops', icon: '⌘', group: 'self' },

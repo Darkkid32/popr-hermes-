@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { ThemeProvider } from './design-system/theme'
 import { Sidebar } from './components/Sidebar'
 import { NewAgentModal } from './components/NewAgentModal'
 import { ToastStack } from './components/ToastStack'
 import { MissionControl } from './pages/MissionControl'
+import { LoginPage } from './pages/LoginPage'
 import { AgentWorkspaceRoute } from './pages/AgentWorkspace'
 import { Goals } from './pages/Goals'
 import { Memory } from './pages/Memory'
@@ -24,7 +26,7 @@ interface PageMeta {
 }
 
 const PAGE_META: Record<string, PageMeta> = {
-  '/mission': { roman: 'I', eyebrow: 'Self · Mission Control', title: 'Mission Control', sub: 'Live telemetry from the agent fleet. Everything below is a projection of a single graph.', kind: 'self' },
+  '/mission': { roman: 'I', eyebrow: 'Self · Machine Control', title: 'Machine Control', sub: 'Live telemetry from the agent fleet. Everything below is a projection of a single graph.', kind: 'self' },
   '/goals': { roman: 'II', eyebrow: 'Self · Goals', title: 'Goals', sub: 'Quarterly objectives. Auto-tracked from your vault, agent runtimes, and operator workflows.', kind: 'self' },
   '/memory': { roman: 'III', eyebrow: 'Self · Memory', title: 'Memory', sub: 'Your second brain. Vault, notes, Omi captures, and the live knowledge graph that connects them all.', kind: 'self' },
   '/hermes': { roman: 'IV', eyebrow: 'Agent · Hermes', title: 'Hermes', sub: 'Local-first agent. Sessions, skills, kanban, memory, and a chat line you can drive from anywhere.', kind: 'agent' },
@@ -55,7 +57,7 @@ function AppShell() {
   const meta = matchMeta(location.pathname)
   const date = formatDate()
 
-  const pageName = location.pathname === '/' ? 'Mission Control' : meta.eyebrow
+  const pageName = location.pathname === '/' ? 'Machine Control' : meta.eyebrow
 
   return (
     <div className="app">
@@ -90,6 +92,7 @@ function AppShell() {
             </div>
             <Routes>
               <Route path="/" element={<MissionControl />} />
+              <Route path="/login" element={<LoginPage />} />
               <Route path="/mission" element={<MissionControl />} />
               <Route path="/goals" element={<Goals />} />
               <Route path="/memory" element={<Memory />} />
@@ -129,7 +132,9 @@ function AppShell() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppShell />
+      <ThemeProvider defaultMode="system">
+        <AppShell />
+      </ThemeProvider>
     </BrowserRouter>
   )
 }
