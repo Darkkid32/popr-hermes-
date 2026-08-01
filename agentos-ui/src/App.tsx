@@ -5,6 +5,7 @@ import { NewAgentModal } from './components/NewAgentModal'
 import { ToastStack } from './components/ToastStack'
 import { MissionControl } from './pages/MissionControl'
 import { LoginPage } from './pages/LoginPage'
+import { OrganizationLayout, OrganizationOverview, OrganizationMembers, OrganizationTeams, OrganizationRoles, OrganizationWorkspaces, OrganizationProjects, OrganizationEnvironments, OrganizationLicenses, OrganizationQuotas, OrganizationActivity, OrganizationSettings } from './pages/organization'
 import { AgentWorkspaceRoute } from './pages/AgentWorkspace'
 import { Goals } from './pages/Goals'
 import { Memory } from './pages/Memory'
@@ -27,6 +28,7 @@ interface PageMeta {
 
 const PAGE_META: Record<string, PageMeta> = {
   '/mission': { roman: 'I', eyebrow: 'Self · Machine Control', title: 'Machine Control', sub: 'Live telemetry from the agent fleet. Everything below is a projection of a single graph.', kind: 'self' },
+  '/org': { roman: 'XVII', eyebrow: 'Organization', title: 'Organization Workspace', sub: 'Members, teams, roles, workspaces, projects, environments, licenses, quotas, and the full activity trail.', kind: 'self' },
   '/goals': { roman: 'II', eyebrow: 'Self · Goals', title: 'Goals', sub: 'Quarterly objectives. Auto-tracked from your vault, agent runtimes, and operator workflows.', kind: 'self' },
   '/memory': { roman: 'III', eyebrow: 'Self · Memory', title: 'Memory', sub: 'Your second brain. Vault, notes, Omi captures, and the live knowledge graph that connects them all.', kind: 'self' },
   '/hermes': { roman: 'IV', eyebrow: 'Agent · Hermes', title: 'Hermes', sub: 'Local-first agent. Sessions, skills, kanban, memory, and a chat line you can drive from anywhere.', kind: 'agent' },
@@ -93,6 +95,20 @@ function AppShell() {
             <Routes>
               <Route path="/" element={<MissionControl />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/org" element={<OrganizationLayout />}>
+                <Route index element={<OrganizationOverview />} />
+                <Route path="overview" element={<OrganizationOverview />} />
+                <Route path="members" element={<OrganizationMembers />} />
+                <Route path="teams" element={<OrganizationTeams />} />
+                <Route path="roles" element={<OrganizationRoles />} />
+                <Route path="workspaces" element={<OrganizationWorkspaces />} />
+                <Route path="projects" element={<OrganizationProjects />} />
+                <Route path="environments" element={<OrganizationEnvironments />} />
+                <Route path="licenses" element={<OrganizationLicenses />} />
+                <Route path="quotas" element={<OrganizationQuotas />} />
+                <Route path="activity" element={<OrganizationActivity />} />
+                <Route path="settings" element={<OrganizationSettings />} />
+              </Route>
               <Route path="/mission" element={<MissionControl />} />
               <Route path="/goals" element={<Goals />} />
               <Route path="/memory" element={<Memory />} />
