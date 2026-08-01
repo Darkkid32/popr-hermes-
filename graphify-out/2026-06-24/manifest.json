@@ -1,0 +1,52 @@
+{
+  "agents/_shared/_log_helper.py": {
+    "mtime": 1782027941.332021,
+    "ast_hash": "476726b3e83d56c1ae367af07a81dcb8",
+    "semantic_hash": "476726b3e83d56c1ae367af07a81dcb8"
+  },
+  "agents/_shared/log-task-local.ps1": {
+    "mtime": 1782028185.7993803,
+    "ast_hash": "74f1e7eb86912d840617c21c1108acb7",
+    "semantic_hash": "74f1e7eb86912d840617c21c1108acb7"
+  },
+  "dashboard.py": {
+    "mtime": 1782239318.678229,
+    "ast_hash": "a9ba7d7332d7adb3fea7c00b3ad11ba4",
+    "semantic_hash": "a9ba7d7332d7adb3fea7c00b3ad11ba4"
+  },
+  "agents/cashflow/AGENTS.md": {
+    "mtime": 1782225438.0088232,
+    "ast_hash": "4a55eadb10c223ab49a69f6dc8fa605c",
+    "semantic_hash": "4a55eadb10c223ab49a69f6dc8fa605c"
+  },
+  "agents/dev/AGENTS.md": {
+    "mtime": 1782225434.9462295,
+    "ast_hash": "21cc54ebcc281271b4d357ea03ae183b",
+    "semantic_hash": "21cc54ebcc281271b4d357ea03ae183b"
+  },
+  "agents/orchestrator/AGENTS.md": {
+    "mtime": 1782225414.2382958,
+    "ast_hash": "20a793833312a1cfd45fee7d117d58ca",
+    "semantic_hash": "20a793833312a1cfd45fee7d117d58ca"
+  },
+  "agents/reach/AGENTS.md": {
+    "mtime": 1782225430.3911133,
+    "ast_hash": "70a0072848cfd2e186358c31586a0de5",
+    "semantic_hash": "70a0072848cfd2e186358c31586a0de5"
+  },
+  "agents/scout/AGENTS.md": {
+    "mtime": 1782225418.9021766,
+    "ast_hash": "3d099048e6fbf79d9cfed7d3d42c8f18",
+    "semantic_hash": "3d099048e6fbf79d9cfed7d3d42c8f18"
+  },
+  "agents/scribe/AGENTS.md": {
+    "mtime": 1782225425.3932383,
+    "ast_hash": "4039566b4794207cffc853bb34980900",
+    "semantic_hash": "4039566b4794207cffc853bb34980900"
+  },
+  "index.html": {
+    "mtime": 1782239331.5098553,
+    "ast_hash": "3196c619187e38ab31d1f493a89d7ffa",
+    "semantic_hash": "3196c619187e38ab31d1f493a89d7ffa"
+  }
+}

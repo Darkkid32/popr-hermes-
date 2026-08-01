@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentOS — Dashboard</title>
+<style>
+:root{--bg:#0a0a0f;--surface:#12121a;--surface-2:#1a1a25;--surface-3:#22222f;--border:#1e1e2e;--border-hover:#2a2a3e;--text:#e8e8f0;--text-dim:#8888a0;--text-muted:#555570;--accent:#7c5cfc;--accent-dim:#6347d6;--green:#00e676;--yellow:#ffd600;--red:#ff5252;--orange:#ff9100;--purple:#b388ff;--cyan:#00e5ff;--radius:12px;--radius-sm:8px;--mono:'SF Mono','Fira Code',monospace;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;--sidebar-w:220px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:13px;height:100vh;overflow:hidden}
+.app{display:grid;grid-template-columns:var(--sidebar-w) 1fr;grid-template-rows:56px 1fr;height:100vh}
+
+/* SIDEBAR */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;grid-row:1/3;overflow-y:auto}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--border)}
+.sidebar-logo svg{width:28px;height:28px}
+.sidebar-logo span{font-weight:700;font-size:15px}
+.sidebar-section{padding:14px 12px 6px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted)}
+.sidebar-nav{flex:1;padding:0 8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;font-size:12.5px;color:var(--text-dim)}
+.nav-item:hover{background:var(--surface-2);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,var(--accent),var(--accent-dim));color:#fff;box-shadow:0 4px 16px rgba(124,92,252,.3)}
+.nav-item svg{width:16px;height:16px;opacity:.7}.nav-item.active svg{opacity:1}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px}
+.nav-tag{margin-left:auto;background:var(--accent);color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:4px}
+.sidebar-footer{border-top:1px solid var(--border);padding:12px}
+.sys-status{background:var(--surface-2);border-radius:var(--radius);padding:12px;margin-bottom:10px}
+.sys-status-header{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.sys-status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.sys-status-label{font-size:11px;font-weight:600;color:var(--green)}
+.sys-status-uptime{font-size:22px;font-weight:700}
+.sys-status-sub{font-size:10px;color:var(--text-muted);margin-bottom:8px}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface-2);border-radius:var(--radius);cursor:pointer}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.user-info{flex:1}.user-name{font-size:12px;font-weight:600}.user-role{font-size:10px;color:var(--text-muted)}
+
+/* HEADER */
+.header{display:flex;align-items:center;padding:0 24px;background:var(--surface);border-bottom:1px solid var(--border);gap:16px}
+.header-search{flex:1;max-width:480px;margin:0 auto}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px}
+.search-box:focus-within{border-color:var(--accent)}
+.search-box svg{width:16px;height:16px;color:var(--text-muted);flex-shrink:0}
+.search-box input{background:none;border:none;color:var(--text);font-size:12.5px;width:100%;outline:none}
+.search-box input::placeholder{color:var(--text-muted)}
+.search-kbd{font-size:10px;color:var(--text-muted);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-family:var(--mono)}
+.header-actions{display:flex;align-items:center;gap:8px}
+.hdr-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface-2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);position:relative}
+.hdr-btn:hover{border-color:var(--border-hover);color:var(--text)}
+.hdr-btn svg{width:16px;height:16px}
+.hdr-badge{position:absolute;top:-3px;right:-3px;background:var(--red);color:#fff;font-size:8px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+.hdr-time{text-align:right}
+.hdr-date{font-size:12px;font-weight:500}
+.hdr-clock{font-size:10px;color:var(--text-muted);font-family:var(--mono)}
+
+/* MAIN */
+.main{overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px}
+.page-title{font-size:22px;font-weight:700}
+.page-sub{font-size:12px;color:var(--text-dim);margin-top:2px}
+.page{display:none}.page.active{display:flex;flex-direction:column;gap:20px}
+
+/* STAT CARDS */
+.stat-cards{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden}
+.stat-card:hover{border-color:var(--border-hover)}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;opacity:.5}
+.stat-card.c-purple::after{background:var(--purple)}.stat-card.c-cyan::after{background:var(--cyan)}.stat-card.c-green::after{background:var(--green)}.stat-card.c-red::after{background:var(--red)}.stat-card.c-orange::after{background:var(--orange)}
+.stat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.stat-icon svg{width:16px;height:16px}
+.stat-icon.purple{background:rgba(124,92,252,.12);color:var(--purple)}
+.stat-icon.cyan{background:rgba(0,229,255,.12);color:var(--cyan)}
+.stat-icon.green{background:rgba(0,230,118,.12);color:var(--green)}
+.stat-icon.red{background:rgba(255,82,82,.12);color:var(--red)}
+.stat-icon.orange{background:rgba(255,145,0,.12);color:var(--orange)}
+.stat-label{font-size:11px;color:var(--text-dim);margin-bottom:4px}
+.stat-value{font-size:24px;font-weight:700}.stat-value small{font-size:13px;font-weight:400;color:var(--text-dim)}
+.stat-chart{margin-top:10px;height:30px}.stat-chart canvas{width:100%;height:100%}
+.stat-delta{display:flex;align-items:center;gap:4px;font-size:10px;margin-top:6px}
+.stat-delta.up{color:var(--green)}.stat-delta.down{color:var(--red)}.stat-delta span{color:var(--text-muted)}
+
+/* SECTION */
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+.section-title{font-size:13px;font-weight:600}
+.section-link{font-size:11px;color:var(--accent);cursor:pointer}
+
+/* TOOLS GRID */
+.tools-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border)}
+.tool-cell{background:var(--surface);padding:16px 12px;text-align:center;cursor:pointer;transition:background .15s}
+.tool-cell:hover{background:var(--surface-2)}
+.tool-avatar{width:48px;height:48px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.tool-name{font-size:12px;font-weight:600;margin-bottom:4px}
+.tool-status{display:flex;align-items:center;justify-content:center;gap:4px;font-size:10px;margin-bottom:4px}
+.tool-status .dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
+.tool-status.online{color:var(--green)}
+.tool-tasks{font-size:10px;color:var(--text-muted);margin-bottom:6px}
+.tool-health{font-size:10px;color:var(--text-dim)}.tool-health strong{color:var(--text)}
+
+/* MID GRID */
+.mid-grid{display:grid;grid-template-columns:1fr 300px 320px;gap:16px}
+
+/* HEALTH */
+.health-body{padding:16px}
+.health-ring{width:120px;height:120px;margin:0 auto 16px;position:relative}
+.health-ring canvas{width:100%;height:100%}
+.health-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.health-ring-value{font-size:22px;font-weight:700}.health-ring-label{font-size:9px;color:var(--text-muted)}
+.health-legend{display:flex;flex-direction:column;gap:6px}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:11px}
+.legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}.legend-label{flex:1;color:var(--text-dim)}.legend-value{font-weight:600}
+
+/* ALERTS */
+.alerts-list{padding:8px}
+.alert-item{display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:var(--radius-sm);cursor:pointer}
+.alert-item:hover{background:var(--surface-2)}
+.alert-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px}
+.alert-icon.critical{background:rgba(255,82,82,.12);color:var(--red)}
+.alert-icon.warning{background:rgba(255,214,0,.12);color:var(--yellow)}
+.alert-icon.info{background:rgba(0,229,255,.12);color:var(--cyan)}
+.alert-icon.success{background:rgba(0,230,118,.12);color:var(--green)}
+.alert-content{flex:1}.alert-title{font-size:11px;font-weight:500;margin-bottom:2px}.alert-sub{font-size:10px;color:var(--text-muted)}
+.alert-time{font-size:9px;color:var(--text-muted);white-space:nowrap;margin-top:2px}
+.alert-badge{font-size:9px;font-weight:600;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.alert-badge.critical{background:rgba(255,82,82,.12);color:var(--red)}
+.alert-badge.warning{background:rgba(255,214,0,.12);color:var(--yellow)}
+.alert-badge.info{background:rgba(0,229,255,.12);color:var(--cyan)}
+.alert-badge.success{background:rgba(0,230,118,.12);color:var(--green)}
+
+/* BOTTOM */
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px}
+.chart-area{padding:16px}
+.chart-canvas{width:100%;height:140px}.chart-canvas canvas{width:100%;height:100%}
+.chart-big-value{font-size:28px;font-weight:700;margin-bottom:4px}.chart-big-value small{font-size:14px;font-weight:400;color:var(--text-dim)}
+.chart-delta{font-size:11px;color:var(--green);margin-bottom:12px}.chart-delta span{color:var(--text-muted)}
+.donut-wrap{display:flex;align-items:center;gap:16px}
+.donut-center{position:absolute;font-size:18px;font-weight:700}
+.donut-legend{display:flex;flex-direction:column;gap:6px;flex:1}
+.donut-legend-item{display:flex;align-items:center;gap:6px;font-size:11px}
+.donut-legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}.donut-legend-label{flex:1;color:var(--text-dim)}.donut-legend-value{font-weight:600}.donut-legend-pct{color:var(--text-muted);font-size:10px}
+
+/* WORKFLOWS */
+.workflow-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border)}.workflow-item:last-child{border-bottom:none}
+.workflow-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
+.workflow-info{flex:1}.workflow-name{font-size:11px;font-weight:500}.workflow-sub{font-size:10px;color:var(--text-muted)}
+.workflow-status{font-size:9px;font-weight:600;color:var(--green)}
+.workflow-bar{width:50px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}.workflow-bar-fill{height:100%;background:var(--green);border-radius:2px}
+
+/* ACTIVITY */
+.activity-list{padding:8px 16px}
+.activity-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}.activity-item:last-child{border-bottom:none}
+.activity-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px}
+.activity-text{flex:1;font-size:11px;color:var(--text-dim)}.activity-text strong{color:var(--text);font-weight:500}
+.activity-time{font-size:9px;color:var(--text-muted);white-space:nowrap}
+
+/* PAGES */
+.agents-table{width:100%;border-collapse:collapse}
+.agents-table th{text-align:left;padding:10px 16px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);border-bottom:1px solid var(--border)}
+.agents-table td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:12px}
+.agents-table tr:hover{background:var(--surface-2)}
+.log-row{display:grid;grid-template-columns:100px 120px 1fr 100px 80px;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);font-size:12px;align-items:center}
+.log-row:hover{background:var(--surface-2)}
+#graph3d{width:100%;height:400px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);background:var(--bg)}
+.graph-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.graph-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center}
+.graph-stat .value{font-size:20px;font-weight:700;color:var(--accent)}.graph-stat .label{font-size:9px;color:var(--text-muted);text-transform:uppercase;margin-top:4px}
+
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="6" fill="#7c5cfc"/><path d="M8 14l4 4 8-8" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>AgentOS</span>
+    </div>
+    <div class="sidebar-nav">
+      <div class="sidebar-section">Core</div>
+      <div class="nav-item active" onclick="showPage('dashboard',this)"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.5A1.5 1.5 0 012.5 1h3A1.5 1.5 0 017 2.5v3A1.5 1.5 0 015.5 7h-3A1.5 1.5 0 011 5.5v-3zm8 0A1.5 1.5 0 0110.5 1h3A1.5 1.5 0 0115 2.5v3A1.5 1.5 0 0113.5 7h-3A1.5 1.5 0 019 5.5v-3zm-8 8A1.5 1.5 0 012.5 9h3A1.5 1.5 0 017 10.5v3A1.5 1.5 0 015.5 15h-3A1.5 1.5 0 011 13.5v-3zm8 0A1.5 1.5 0 0110.5 9h3a1.5 1.5 0 011.5 1.5v3a1.5 1.5 0 01-1.5 1.5h-3A1.5 1.5 0 019 13.5v-3z"/></svg>Dashboard</div>
+      <div class="nav-item" onclick="showPage('agents',this)"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>Agents</div>
+      <div class="nav-item" onclick="showPage('alerts',this)"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 16a2 2 0 001.985-1.75c.017-.137-.097-.25-.235-.25h-3.5c-.138 0-.252.113-.235.25A2 2 0 008 16zM3 5a5 5 0 0110 0v2.947c0 .05.015.098.042.139l1.703 2.555A1.519 1.519 0 0113.482 13H2.518a1.516 1.516 0 01-1.263-2.36l1.703-2.554A.255.255 0 003 7.947V5z"/></svg>Alerts <span class="nav-badge" id="alert-count">0</span></div>
+      <div class="nav-item" onclick="showPage('logs',this)"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12a1 1 0 011 1v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1zm1 2v8h12V4H3z"/></svg>Logs</div>
+      <div class="nav-item" onclick="showPage('workflows',this)"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 3.5A1.5 1.5 0 017 2h2.5a.5.5 0 01.5.5v1a.5.5 0 01-.5.5H7a.5.5 0 00-.5.5v1h3.5a.5.5 0 01.5.5v1a.5.5 0 01-.5.5H6v2h2.5a.5.5 0 01.5.5v1a.5.5 0 01-.5.5H7a1.5 1.5 0 01-1.5-1.5v-7A1.5 1.5 0 017 2h0A1.5 1.5 0 015.5 3.5v0z"/></svg>Workflows</div>
+      <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5a.5.5 0 01.5-.5h13a.5.5 0 010 1h-13a.5.5 0 01-.5-.5zM1 7.5a.5.5 0 01.5-.5h13a.5.5 0 010 1h-13a.5.5 0 01-.5-.5zM1 11.5a.5.5 0 01.5-.5h13a.5.5 0 010 1h-13a.5.5 0 01-.5-.5z"/></svg>Analytics</div>
+      <div class="nav-item" onclick="showPage('graphify',this)"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="8" cy="12" r="2"/><line x1="5.5" y1="5" x2="7" y2="10.5" stroke="currentColor" stroke-width="1"/><line x1="10.5" y1="5" x2="9" y2="10.5" stroke="currentColor" stroke-width="1"/></svg>Graphify <span class="nav-tag">New</span></div>
+      <div class="sidebar-section">Configuration</div>
+      <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 4.754a3.246 3.246 0 100 6.492 3.246 3.246 0 000-6.492zM5.754 8a2.246 2.246 0 114.492 0 2.246 2.246 0 01-4.492 0z"/></svg>Integrations</div>
+      <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 11H2v3h2v-3zm5-4H7v7h2V7zm5-5h-2v12h2V2z"/></svg>Tools</div>
+      <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 4.754a3.246 3.246 0 100 6.492 3.246 3.246 0 000-6.492zM5.754 8a2.246 2.246 0 114.492 0 2.246 2.246 0 01-4.492 0z"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 01-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 01-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 01.52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 011.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 011.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 01.52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 01-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 01-1.255-.52l-.094-.319z"/></svg>Settings</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sys-status">
+        <div class="sys-status-header"><div class="sys-status-dot"></div><div class="sys-status-label">Operational</div></div>
+        <div class="sys-status-uptime">99.96%</div>
+        <div class="sys-status-sub">Uptime</div>
+      </div>
+      <div class="user-card">
+        <div class="user-avatar">A</div>
+        <div class="user-info"><div class="user-name">Alex Operator</div><div class="user-role">Administrator</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-search"><div class="search-box"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 10-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 001.415-1.414l-3.85-3.85a1.007 1.007 0 00-.115-.1zM12 6.5a5.5 5.5 0 11-11 0 5.5 5.5 0 0111 0z"/></svg><input type="text" placeholder="Search agents, workflows, logs..."><span class="search-kbd">⌘K</span></div></div>
+    <div class="header-actions">
+      <div class="hdr-btn" style="position:relative"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 16a2 2 0 001.985-1.75c.017-.137-.097-.25-.235-.25h-3.5c-.138 0-.252.113-.235.25A2 2 0 008 16zM3 5a5 5 0 0110 0v2.947c0 .05.015.098.042.139l1.703 2.555A1.519 1.519 0 0113.482 13H2.518a1.516 1.516 0 01-1.263-2.36l1.703-2.554A.255.255 0 003 7.947V5z"/></svg><div class="hdr-badge" id="notif-badge">0</div></div>
+      <div class="hdr-time"><div class="hdr-date" id="hdr-date"></div><div class="hdr-clock" id="hdr-clock"></div></div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div class="page-title">Dashboard</div><div class="page-sub">Real-time overview of your AgentOS infrastructure</div></div>
+        <div style="display:flex;gap:8px;align-items:center"><span style="font-size:11px;color:var(--text-muted)">Last 15 minutes</span><button style="padding:6px 14px;border-radius:var(--radius-sm);border:1px solid var(--accent);background:var(--accent);color:#fff;font-size:12px;font-weight:500;cursor:pointer">+ Add Widget</button></div>
+      </div>
+      <div class="stat-cards">
+        <div class="stat-card c-purple"><div class="stat-icon purple"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="4" width="12" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h6M5 9h4" stroke="currentColor" stroke-width="1"/></svg></div><div class="stat-label">Latency (P95)</div><div class="stat-value">12.7 <small>ms</small></div><div class="stat-chart"><canvas id="c1"></canvas></div><div class="stat-delta down">&#8595; 15.6% <span>vs last 15m</span></div></div>
+        <div class="stat-card c-cyan"><div class="stat-icon cyan"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 2v2M8 12v2M2 8h2M12 8h2" stroke="currentColor" stroke-width="1.5"/></svg></div><div class="stat-label">Throughput</div><div class="stat-value">28,419 <small>req/s</small></div><div class="stat-chart"><canvas id="c2"></canvas></div><div class="stat-delta up">&#8593; 8.3% <span>vs last 15m</span></div></div>
+        <div class="stat-card c-green"><div class="stat-icon green"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg></div><div class="stat-label">Active Agents</div><div class="stat-value" id="stat-agents">523</div><div class="stat-chart"><canvas id="c3"></canvas></div><div class="stat-delta up">&#8593; 12 new <span>vs last 15m</span></div></div>
+        <div class="stat-card c-red"><div class="stat-icon red"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M6 6l4 4M10 6l-4 4" stroke="currentColor" stroke-width="1.5"/></svg></div><div class="stat-label">Error Rate</div><div class="stat-value">0.18 <small>%</small></div><div class="stat-chart"><canvas id="c4"></canvas></div><div class="stat-delta down">&#8595; 22.4% <span>vs last 15m</span></div></div>
+        <div class="stat-card c-green"><div class="stat-icon green"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="stat-label">Success Rate</div><div class="stat-value">99.82 <small>%</small></div><div class="stat-chart"><canvas id="c5"></canvas></div><div class="stat-delta up">&#8593; 1.7% <span>vs last 15m</span></div></div>
+        <div class="stat-card c-orange"><div class="stat-icon orange"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="8" width="2" height="5" rx="0.5"/><rect x="7" y="5" width="2" height="8" rx="0.5"/><rect x="11" y="3" width="2" height="10" rx="0.5"/></svg></div><div class="stat-label">CPU Usage</div><div class="stat-value">42.6 <small>%</small></div><div class="stat-chart"><canvas id="c6"></canvas></div><div class="stat-delta up">&#8593; 6.1% <span>vs last 15m</span></div></div>
+      </div>
+      <!-- Tools/Agents -->
+      <div class="section-card">
+        <div class="section-header"><div class="section-title">Agents</div><div class="section-link" onclick="showPage('agents',document.querySelector('[onclick*=agents]'))">View all agents &rarr;</div></div>
+        <div class="tools-grid" id="agents-grid"></div>
+      </div>
+      <div class="mid-grid">
+        <div class="section-card">
+          <div class="section-header"><div class="section-title">System Health</div></div>
+          <div class="health-body">
+            <div class="health-ring"><canvas id="health-ring" width="120" height="120"></canvas><div class="health-ring-center"><div class="health-ring-value">18</div><div class="health-ring-label">Healthy</div></div></div>
+            <div class="health-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div><div class="legend-label">Healthy</div><div class="legend-value">18</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div><div class="legend-label">Warning</div><div class="legend-value">3</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div><div class="legend-label">Critical</div><div class="legend-value">1</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--text-muted)"></div><div class="legend-label">Unknown</div><div class="legend-value">0</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-header"><div class="section-title">Alerts</div><div class="section-link" onclick="showPage('alerts',document.querySelector('[onclick*=alerts]'))">View all</div></div>
+          <div class="alerts-list" id="alerts-list"></div>
+        </div>
+      </div>
+      <div class="bottom-grid">
+        <div class="section-card"><div class="section-header"><div class="section-title">System Performance</div></div><div class="chart-area"><div style="display:flex;gap:16px;margin-bottom:10px"><div><div style="font-size:10px;color:var(--text-muted)">CPU</div><div style="font-size:16px;font-weight:700;color:var(--orange)">42%</div></div><div><div style="font-size:10px;color:var(--text-muted)">Memory</div><div style="font-size:16px;font-weight:700;color:var(--cyan)">68%</div></div><div><div style="font-size:10px;color:var(--text-muted)">Network</div><div style="font-size:16px;font-weight:700;color:var(--green)">1.2 TB/s</div></div><div><div style="font-size:10px;color:var(--text-muted)">Disk I/O</div><div style="font-size:16px;font-weight:700;color:var(--purple)">320 MB/s</div></div></div><div class="chart-canvas"><canvas id="c7"></canvas></div></div></div>
+        <div class="section-card"><div class="section-header"><div class="section-title">Requests Over Time</div></div><div class="chart-area"><div class="chart-big-value">28,419 <small>req/s</small></div><div class="chart-delta">&#8593; 8.3% <span>vs last 15m</span></div><div class="chart-canvas"><canvas id="c8"></canvas></div></div></div>
+        <div class="section-card"><div class="section-header"><div class="section-title">Requests by Status</div></div><div class="chart-area"><div class="donut-wrap"><div style="position:relative;width:120px;height:120px;flex-shrink:0"><canvas id="donut" width="120" height="120"></canvas><div class="donut-center">28.4K<br><span style="font-size:10px;font-weight:400;color:var(--text-dim)">Total</span></div></div><div class="donut-legend"><div class="donut-legend-item"><div class="donut-legend-dot" style="background:var(--green)"></div><div class="donut-legend-label">Success</div><div class="donut-legend-value">24.8K <span class="donut-legend-pct">(87.3%)</span></div></div><div class="donut-legend-item"><div class="donut-legend-dot" style="background:var(--orange)"></div><div class="donut-legend-label">Client Error</div><div class="donut-legend-value">2.1K <span class="donut-legend-pct">(7.4%)</span></div></div><div class="donut-legend-item"><div class="donut-legend-dot" style="background:var(--red)"></div><div class="donut-legend-label">Server Error</div><div class="donut-legend-value">1.5K <span class="donut-legend-pct">(5.3%)</span></div></div></div></div></div></div>
+        <div class="section-card"><div class="section-header"><div class="section-title">Active Workflows</div><div class="section-link">View all</div></div><div id="workflows-list"></div></div>
+      </div>
+      <div class="section-card"><div class="section-header"><div class="section-title">Recent Activity</div></div><div class="activity-list" id="activity-list"></div></div>
+    </div>
+
+    <!-- AGENTS PAGE -->
+    <div class="page" id="page-agents"><div><div class="page-title">Agents</div><div class="page-sub">All backend tools and agent roles</div></div>
+      <div class="section-card"><div class="section-header"><div class="section-title">Backend Tools</div></div><div id="tools-detail" style="padding:16px"></div></div>
+      <div class="section-card"><div class="section-header"><div class="section-title">Agent Roles</div></div><div id="roles-detail"></div></div>
+    </div>
+
+    <!-- ALERTS PAGE -->
+    <div class="page" id="page-alerts"><div><div class="page-title">Alerts</div><div class="page-sub">Recent agent activity</div></div>
+      <div class="section-card"><div class="alerts-list" id="alerts-full"></div></div>
+    </div>
+
+    <!-- LOGS PAGE -->
+    <div class="page" id="page-logs"><div><div class="page-title">Logs</div><div class="page-sub">Execution history</div></div>
+      <div class="section-card"><div id="logs-full"></div></div>
+    </div>
+
+    <!-- WORKFLOWS PAGE -->
+    <div class="page" id="page-workflows"><div><div class="page-title">Workflows</div><div class="page-sub">Active tool pipelines</div></div>
+      <div class="section-card"><div id="workflows-full"></div></div>
+    </div>
+
+    <!-- GRAPHIFY PAGE -->
+    <div class="page" id="page-graphify"><div><div class="page-title">Graphify</div><div class="page-sub">Knowledge graph</div></div>
+      <div class="section-card"><div class="section-header"><div class="section-title">Knowledge Graph</div><div style="display:flex;gap:8px"><button onclick="graphifyRefresh()" style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:11px;cursor:pointer">Refresh</button><button onclick="graphifyBuild()" style="padding:6px 12px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-size:11px;cursor:pointer">Build Graph</button></div></div>
+        <div style="padding:16px"><div id="graphify-status">Loading...</div><div id="graph3d" style="margin-top:12px"></div><div class="graph-stats" id="graphify-stats"></div><div id="graphify-output" style="margin-top:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px;font-family:var(--mono);font-size:11px;max-height:200px;overflow-y:auto;display:none"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Clock
+function updateClock(){const n=new Date();document.getElementById('hdr-date').textContent=n.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});document.getElementById('hdr-clock').textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+updateClock();setInterval(updateClock,1000);
+
+// Pages
+function showPage(p,el){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');if(p==='graphify')graphifyRefresh();if(p==='logs')renderFullLogs();if(p==='alerts')renderFullAlerts();if(p==='workflows')renderFullWorkflows();if(p==='agents')renderAgentPages()}
+
+// Charts
+function drawMini(id,data,color,fill){const c=document.getElementById(id);if(!c)return;const ctx=c.getContext('2d');const W=c.parentElement.offsetWidth;const H=c.parentElement.offsetHeight||30;c.width=W*2;c.height=H*2;c.style.width=W+'px';c.style.height=H+'px';ctx.scale(2,2);const mx=Math.max(...data),mn=Math.min(...data),rng=mx-mn||1;ctx.beginPath();data.forEach((v,i)=>{const x=(i/(data.length-1))*W,y=H-((v-mn)/rng)*(H-4)-2;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.stroke();if(fill){ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,color+'30');g.addColorStop(1,color+'00');ctx.fillStyle=g;ctx.fill()}}
+function rnd(n,b){return Array.from({length:n},()=>b+Math.random()*b*.4-b*.2)}
+function drawAll(){['c1','c2','c3','c4','c5','c6'].forEach((id,i)=>drawMini(id,rnd(20,[12,28,500,0.2,99.8,42][i]),['#b388ff','#00e5ff','#00e676','#ff5252','#00e676','#ff9100'][i],true));drawMini('c7',rnd(30,50),'#7c5cfc',true);drawMini('c8',rnd(30,28000),'#00e5ff',true)}
+function drawDonut(){const dc=document.getElementById('donut');if(!dc)return;const ctx=dc.getContext('2d');dc.width=240;dc.height=240;dc.style.width='120px';dc.style.height='120px';ctx.scale(2,2);const cx=60,cy=60,r=45,lw=12;const data=[{v:87.3,c:'#00e676'},{v:7.4,c:'#ff9100'},{v:5.3,c:'#ff5252'}];let s=-Math.PI/2;data.forEach(d=>{const a=(d.v/100)*Math.PI*2;ctx.beginPath();ctx.arc(cx,cy,r,s,s+a);ctx.strokeStyle=d.c;ctx.lineWidth=lw;ctx.lineCap='butt';ctx.stroke();s+=a+.02})}
+function drawHealth(){const hc=document.getElementById('health-ring');if(!hc)return;const ctx=hc.getContext('2d');hc.width=240;hc.height=240;hc.style.width='120px';hc.style.height='120px';ctx.scale(2,2);const cx=60,cy=60,r=48,lw=8;const data=[{v:18,c:'#00e676'},{v:3,c:'#ffd600'},{v:1,c:'#ff5252'}];const total=22;let s=-Math.PI/2;data.forEach(d=>{if(!d.v)return;const a=(d.v/total)*Math.PI*2;ctx.beginPath();ctx.arc(cx,cy,r,s,s+a);ctx.strokeStyle=d.c;ctx.lineWidth=lw;ctx.lineCap='round';ctx.stroke();s+=a+.04})}
+function timeAgo(ts){if(!ts)return'';const d=(Date.now()-new Date(ts).getTime())/1000;if(d<60)return'just now';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago'}
+
+// Data
+let allLogs=[];
+const TOOLS=[{id:'hermes',name:'Hermes Agent',icon:'🦅',bg:'rgba(124,92,252,.12)',tasks:12},{id:'claude_code',name:'Claude Code',icon:'🔥',bg:'rgba(255,82,82,.12)',tasks:24},{id:'opencode',name:'OpenCode',icon:'⚡',bg:'rgba(255,214,0,.12)',tasks:18},{id:'openclaw',name:'OpenClaw',icon:'☁️',bg:'rgba(0,229,255,.12)',tasks:8}];
+const ROLES=[{name:'Scout',icon:'🔍',bg:'rgba(0,230,118,.12)',tasks:16,health:98.9},{name:'Scribe',icon:'✏️',bg:'rgba(179,136,255,.12)',tasks:11,health:97.6},{name:'Orchestrator',icon:'🦅',bg:'rgba(124,92,252,.12)',tasks:0,health:99.2},{name:'Reach',icon:'📢',bg:'rgba(255,145,0,.12)',tasks:0,health:98.5},{name:'Dev',icon:'💻',bg:'rgba(255,82,82,.12)',tasks:0,health:99.1},{name:'Cashflow',icon:'💰',bg:'rgba(255,214,0,.12)',tasks:0,health:97.8}];
+
+async function loadAll(){
+  try{
+    const d=await fetch('/api/agents').then(r=>r.json());
+    const bd=await fetch('/api/board').then(r=>r.json());
+    const lg=await fetch('/api/logs?limit=50').then(r=>r.json());
+    allLogs=lg.logs||[];
+    // Update tool health from real data
+    const tools=d.tools||{};
+    TOOLS.forEach(t=>{if(tools[t.id])t.online=tools[t.status==='available']});
+    document.getElementById('alert-count').textContent=allLogs.filter(l=>l.status==='failed').length;
+    document.getElementById('notif-badge').textContent=allLogs.filter(l=>l.status==='failed').length;
+    document.getElementById('stat-agents').textContent=Object.keys(d.agents||{}).length+Object.keys(tools).length;
+    renderAgentsGrid();renderAlerts(allLogs.slice(0,5));renderActivity(allLogs.slice(0,5));renderWorkflows();
+    drawAll();drawDonut();drawHealth();
+  }catch(e){console.error(e)}
+}
+
+function renderAgentsGrid(){
+  const el=document.getElementById('agents-grid');if(!el)return;
+  const all=[...TOOLS.map(t=>({...t,health:(98+Math.random()*2).toFixed(1),online:true})),...ROLES.map(r=>({...r,online:true}))];
+  el.innerHTML=all.map(a=>`<div class="tool-cell"><div class="tool-avatar" style="background:${a.bg}">${a.icon}</div><div class="tool-name">${a.name}</div><div class="tool-status online"><div class="dot"></div>Online</div><div class="tool-tasks">${a.tasks} Tasks</div><div class="tool-health"><strong>${a.health}%</strong> Health</div></div>`).join('');
+}
+
+function renderAlerts(logs){
+  const el=document.getElementById('alerts-list');if(!el)return;
+  const types=[{icon:'⚠️',cls:'critical',title:'High Memory Usage',sub:'AI Engine',badge:'Critical',time:'2m ago'},{icon:'⚠️',cls:'warning',title:'Agent Unresponsive',sub:'Data Processor 02',badge:'Warning',time:'5m ago'},{icon:'⚠️',cls:'warning',title:'High Latency Detected',sub:'API Gateway',badge:'Warning',time:'8m ago'},{icon:'ℹ️',cls:'info',title:'New Agent Registered',sub:'Web Scraper 07',badge:'Info',time:'12m ago'},{icon:'✅',cls:'success',title:'Backup Completed',sub:'Database',badge:'Success',time:'15m ago'}];
+  // Mix real logs with static alerts
+  const realAlerts=logs.slice(0,2).map(l=>({icon:l.status==='failed'?'⚠️':'✅',cls:l.status==='failed'?'critical':'success',title:l.task_description||'Task',sub:l.agent_name+' · '+(l.model_used||''),badge:l.status==='failed'?'Error':'Success',time:timeAgo(l.created_at)}));
+  const all=[...realAlerts,...types].slice(0,5);
+  el.innerHTML=all.map(a=>`<div class="alert-item"><div class="alert-icon ${a.cls}">${a.icon}</div><div class="alert-content"><div class="alert-title">${a.title}</div><div class="alert-sub">${a.sub}</div></div><div style="text-align:right"><div class="alert-time">${a.time}</div><div class="alert-badge ${a.cls}" style="margin-top:4px">${a.badge}</div></div></div>`).join('');
+}
+
+function renderActivity(logs){
+  const el=document.getElementById('activity-list');if(!el)return;
+  const items=[{icon:'🚀',color:'var(--accent)',text:'<strong>Agent deployed</strong> Web Scraper 07',time:'2m ago'},{icon:'⚙️',color:'var(--text-dim)',text:'<strong>Configuration updated</strong> Auth Service',time:'5m ago'},{icon:'▶️',color:'var(--green)',text:'<strong>Workflow executed</strong> Data Pipeline',time:'7m ago'},{icon:'✅',color:'var(--green)',text:'<strong>Alert acknowledged</strong> High Memory Usage',time:'8m ago'},{icon:'💾',color:'var(--cyan)',text:'<strong>Backup completed</strong> Database',time:'15m ago'}];
+  el.innerHTML=items.map(a=>`<div class="activity-item"><div class="activity-icon" style="background:${a.color}18;color:${a.color}">${a.icon}</div><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div>`).join('');
+}
+
+function renderWorkflows(){
+  const el=document.getElementById('workflows-list');if(!el)return;
+  const wfs=[{icon:'🔄',color:'var(--accent)',name:'Data Pipeline Sync',time:'5m ago',pct:75},{icon:'👤',color:'var(--cyan)',name:'User Onboarding Flow',time:'12m ago',pct:60},{icon:'💾',color:'var(--green)',name:'Backup and Restore',time:'18m ago',pct:99},{icon:'📊',color:'var(--purple)',name:'Log Aggregation',time:'25m ago',pct:45}];
+  el.innerHTML=wfs.map(w=>`<div class="workflow-item"><div class="workflow-icon" style="background:${w.color}18;color:${w.color}">${w.icon}</div><div class="workflow-info"><div class="workflow-name">${w.name}</div><div class="workflow-sub">${w.time}</div></div><div class="workflow-status">Running</div><div class="workflow-bar"><div class="workflow-bar-fill" style="width:${w.pct}%"></div></div></div>`).join('');
+}
+
+function renderFullLogs(){document.getElementById('logs-full').innerHTML=allLogs.map(l=>`<div class="log-row"><div style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">${timeAgo(l.created_at)}</div><div style="font-weight:500">${l.agent_name}</div><div style="color:var(--text-dim)">${l.task_description||''}</div><div style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">${l.model_used||''}</div><div><span class="alert-badge ${l.status==='failed'?'critical':l.status==='started'?'info':'success'}">${l.status}</span></div></div>`).join('')}
+function renderFullAlerts(){renderAlerts(allLogs)}
+function renderFullWorkflows(){const el=document.getElementById('workflows-full');const wfs=[{icon:'🔄',color:'var(--accent)',name:'Data Pipeline Sync',sub:'5m ago',pct:75},{icon:'👤',color:'var(--cyan)',name:'User Onboarding Flow',sub:'12m ago',pct:60},{icon:'💾',color:'var(--green)',name:'Backup and Restore',sub:'18m ago',pct:99},{icon:'📊',color:'var(--purple)',name:'Log Aggregation',sub:'25m ago',pct:45}];el.innerHTML=wfs.map(w=>`<div class="workflow-item"><div class="workflow-icon" style="background:${w.color}18;color:${w.color}">${w.icon}</div><div class="workflow-info"><div class="workflow-name">${w.name}</div><div class="workflow-sub">${w.sub}</div></div><div class="workflow-status">Running</div><div class="workflow-bar"><div class="workflow-bar-fill" style="width:${w.pct}%"></div></div></div>`).join('')}
+function renderAgentPages(){document.getElementById('tools-detail').innerHTML=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">${TOOLS.map(t=>`<div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center"><div style="font-size:32px;margin-bottom:8px">${t.icon}</div><div style="font-weight:600;margin-bottom:4px">${t.name}</div><div style="font-size:10px;color:var(--green)">Online</div><div style="font-size:10px;color:var(--text-muted);margin-top:4px">${t.tasks} tasks</div></div>`).join('')}</div>`;document.getElementById('roles-detail').innerHTML=`<table class="agents-table"><thead><tr><th>Name</th><th>Tasks</th><th>Health</th><th>Status</th></tr></thead><tbody>${ROLES.map(r=>`<tr><td style="font-weight:600">${r.icon} ${r.name}</td><td>${r.tasks}</td><td>${r.health}%</td><td style="color:var(--green)">Online</td></tr>`).join('')}</tbody></table>`}
+
+// Graphify
+async function graphifyRefresh(){const el=document.getElementById('graphify-status');try{const s=await fetch('/api/graphify/status').then(r=>r.json());el.innerHTML=`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"><div style="padding:10px;background:var(--surface-2);border-radius:8px;display:flex;justify-content:space-between"><span style="font-size:12px">Graph Exists</span><span style="color:${s.graph_exists?'var(--green)':'var(--text-muted)'}">${s.graph_exists?'Yes':'No'}</span></div>${s.graph_exists?`<div style="padding:10px;background:var(--surface-2);border-radius:8px;display:flex;justify-content:space-between"><span style="font-size:12px">Size</span><span>${s.graph_size_kb} KB</span></div>`:''}</div>`;if(s.graph_exists)renderGraph3D()}catch(e){el.innerHTML='<span style="color:var(--red)">'+e.message+'</span>'}}
+function renderGraph3D(){const c=document.getElementById('graph3d');if(!c)return;c.innerHTML='<canvas id="gc"></canvas>';const cv=document.getElementById('gc');const ctx=cv.getContext('2d');const W=c.offsetWidth;cv.width=W*2;cv.height=800;cv.style.width=W+'px';cv.style.height='400px';ctx.scale(2,2);const nodes=[{x:W/2,y:200,z:0,r:20,color:'#7c5cfc',label:'AgentOS'},{x:W/2-100,y:120,z:30,r:14,color:'#7c5cfc',label:'Hermes'},{x:W/2+100,y:120,z:-20,r:14,color:'#ff5252',label:'Claude'},{x:W/2-100,y:280,z:-30,r:14,color:'#ffd600',label:'OpenCode'},{x:W/2+100,y:280,z:20,r:14,color:'#00e5ff',label:'OpenClaw'}];const edges=[[0,1],[0,2],[0,3],[0,4]];let angle=0;(function draw(){ctx.clearRect(0,0,W,400);angle+=.005;const proj=nodes.map((n,i)=>{const cos=Math.cos(angle);const px=n.x-W/2;const rx=px*cos-n.z*Math.sin(angle);return{...n,i,sx:W/2+rx,sy:n.y,scale:1+(px*Math.sin(angle)+n.z*cos)/500,z:px*Math.sin(angle)+n.z*cos}}).sort((a,b)=>a.z-b.z);ctx.strokeStyle='rgba(124,92,252,.15)';ctx.lineWidth=1;edges.forEach(([a,b])=>{const na=proj.find(x=>x.i===a),nb=proj.find(x=>x.i===b);if(na&&nb){ctx.beginPath();ctx.moveTo(na.sx,na.sy);ctx.lineTo(nb.sx,nb.sy);ctx.stroke()}});proj.forEach(n=>{const r=n.r*n.scale;const g=ctx.createRadialGradient(n.sx,n.sy,0,n.sx,n.sy,r*2);g.addColorStop(0,n.color+'40');g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.beginPath();ctx.arc(n.sx,n.sy,r*2,0,Math.PI*2);ctx.fill();ctx.fillStyle=n.color;ctx.beginPath();ctx.arc(n.sx,n.sy,r,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.font=`${Math.round(9*n.scale)}px -apple-system,sans-serif`;ctx.textAlign='center';ctx.fillText(n.label,n.sx,n.sy+r+12*n.scale)});requestAnimationFrame(draw)})();document.getElementById('graphify-stats').innerHTML=`<div class="graph-stat"><div class="value">72</div><div class="label">Nodes</div></div><div class="graph-stat"><div class="value">86</div><div class="label">Edges</div></div><div class="graph-stat"><div class="value">14</div><div class="label">Communities</div></div>`}
+async function graphifyBuild(){const o=document.getElementById('graphify-output');o.style.display='block';o.innerHTML='Starting...';try{const r=await fetch('/api/graphify/build',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:'C:\\Users\\poove\\.hermes',backend:'ollama',model:'minimax-m3:cloud'})});const d=await r.json();o.innerHTML=`Task: ${d.task_id}\nStatus: ${d.status}`}catch(e){o.innerHTML='Error: '+e.message}}
+
+window.addEventListener('resize',drawAll);
+loadAll();
+</script>
+</body>
+</html>

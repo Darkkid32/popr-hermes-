@@ -1,0 +1,213 @@
+{
+  "communities": {
+    "0": [
+      "index_alert_count",
+      "index_graph3d",
+      "index_notif_badge",
+      "index_page_agents",
+      "index_page_alerts",
+      "index_page_dashboard",
+      "index_page_graphify",
+      "index_page_logs",
+      "index_page_workflows",
+      "index_showpage",
+      "index_sidebar",
+      "index_sys_status",
+      "index_user_card"
+    ],
+    "1": [
+      "agents_cashflow",
+      "agents_cashflow_income_log",
+      "agents_dev",
+      "agents_dev_dashboard",
+      "agents_orchestrator",
+      "agents_orchestrator_agent_logs_db",
+      "agents_orchestrator_board_db",
+      "agents_orchestrator_log_task",
+      "agents_orchestrator_telegram",
+      "agents_reach",
+      "agents_scout",
+      "agents_scribe"
+    ],
+    "2": [
+      "dashboard_dashboardhandler",
+      "dashboard_dashboardhandler_do_get",
+      "dashboard_dashboardhandler_do_options",
+      "dashboard_dashboardhandler_log_message",
+      "dashboard_dashboardhandler_send_html",
+      "dashboard_dashboardhandler_send_json",
+      "dashboard_graphify_status",
+      "dashboard_rationale_279"
+    ],
+    "3": [
+      "dashboard",
+      "dashboard_create_board_task",
+      "dashboard_db_connect",
+      "dashboard_get_agent_logs",
+      "dashboard_get_board_tasks"
+    ],
+    "4": [
+      "dashboard_dashboardhandler_do_post",
+      "dashboard_graphify_query",
+      "dashboard_rationale_335",
+      "dashboard_update_board_task"
+    ],
+    "5": [
+      "dashboard_graphify_build",
+      "dashboard_main",
+      "dashboard_rationale_303",
+      "dashboard_utc_now"
+    ],
+    "6": [
+      "dashboard_log_agent_task",
+      "dashboard_rationale_169",
+      "dashboard_rationale_185",
+      "dashboard_run_agent_prompt"
+    ],
+    "7": [
+      "index_header",
+      "index_hud_clock"
+    ],
+    "8": [
+      "shared_log_helper",
+      "shared_log_helper_rationale_1"
+    ],
+    "9": [
+      "shared_log_task_local",
+      "shared_log_task_local_resolve_python"
+    ],
+    "10": [
+      "index_html"
+    ],
+    "11": [
+      "index_main"
+    ]
+  },
+  "cohesion": {
+    "0": 0.21794871794871795,
+    "1": 0.19696969696969696,
+    "2": 0.32142857142857145,
+    "3": 0.7,
+    "4": 0.5,
+    "5": 0.5,
+    "6": 0.5,
+    "7": 1.0,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0,
+    "11": 1.0
+  },
+  "gods": [
+    {
+      "id": "dashboard_utc_now",
+      "label": "utc_now()",
+      "degree": 9
+    },
+    {
+      "id": "agents_orchestrator",
+      "label": "Orchestrator Agent",
+      "degree": 8
+    },
+    {
+      "id": "index_sidebar",
+      "label": "Sidebar Navigation Component",
+      "degree": 8
+    },
+    {
+      "id": "dashboard_dashboardhandler",
+      "label": "DashboardHandler",
+      "degree": 7
+    },
+    {
+      "id": "index_showpage",
+      "label": "showPage (page navigation function)",
+      "degree": 6
+    },
+    {
+      "id": "dashboard_db_connect",
+      "label": "db_connect()",
+      "degree": 5
+    },
+    {
+      "id": "dashboard_run_agent_prompt",
+      "label": "run_agent_prompt()",
+      "degree": 5
+    },
+    {
+      "id": "dashboard_update_board_task",
+      "label": "update_board_task()",
+      "degree": 4
+    },
+    {
+      "id": "dashboard_create_board_task",
+      "label": "create_board_task()",
+      "degree": 4
+    },
+    {
+      "id": "index_page_alerts",
+      "label": "Alerts Page",
+      "degree": 4
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Orchestrator Agent",
+      "target": "Cashflow Agent",
+      "source_files": [
+        "agents/orchestrator/AGENTS.md",
+        "agents/cashflow/AGENTS.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `Cashflow Agent` unexpectedly reaches hub `Orchestrator Agent`"
+    },
+    {
+      "source": "Orchestrator Agent",
+      "target": "Dev Agent",
+      "source_files": [
+        "agents/orchestrator/AGENTS.md",
+        "agents/dev/AGENTS.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `Dev Agent` unexpectedly reaches hub `Orchestrator Agent`"
+    },
+    {
+      "source": "Orchestrator Agent",
+      "target": "Reach Agent",
+      "source_files": [
+        "agents/orchestrator/AGENTS.md",
+        "agents/reach/AGENTS.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `Reach Agent` unexpectedly reaches hub `Orchestrator Agent`"
+    },
+    {
+      "source": "Orchestrator Agent",
+      "target": "Scout Agent",
+      "source_files": [
+        "agents/orchestrator/AGENTS.md",
+        "agents/scout/AGENTS.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `Scout Agent` unexpectedly reaches hub `Orchestrator Agent`"
+    },
+    {
+      "source": "Orchestrator Agent",
+      "target": "Scribe Agent",
+      "source_files": [
+        "agents/orchestrator/AGENTS.md",
+        "agents/scribe/AGENTS.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "tokens": {
+    "input": 7999,
+    "output": 3421
+  }
+}

@@ -1,0 +1,6 @@
+platforms:
+  discord:
+    enabled: true
+    extra:
+      bot_token: "${DISCORD_BOT_TOKEN}"
+      application_id: "${DISCORD_APPLICATION_ID}"

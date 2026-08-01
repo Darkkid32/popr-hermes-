@@ -1,0 +1,22 @@
+{
+  "communities": {
+    "0": [
+      "orchestrator_orchestrator"
+    ]
+  },
+  "cohesion": {
+    "0": 1.0
+  },
+  "gods": [
+    {
+      "id": "orchestrator_orchestrator",
+      "label": "Orchestrator",
+      "degree": 0
+    }
+  ],
+  "surprises": [],
+  "tokens": {
+    "input": 1232,
+    "output": 79
+  }
+}

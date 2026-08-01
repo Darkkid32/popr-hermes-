@@ -1,0 +1,22 @@
+{
+  "communities": {
+    "0": [
+      "dev_dev"
+    ]
+  },
+  "cohesion": {
+    "0": 1.0
+  },
+  "gods": [
+    {
+      "id": "dev_dev",
+      "label": "Dev",
+      "degree": 0
+    }
+  ],
+  "surprises": [],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

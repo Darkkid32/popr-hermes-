@@ -1,0 +1,234 @@
+{
+  "communities": {
+    "0": [
+      "dashboard",
+      "dashboard_create_board_task",
+      "dashboard_dashboardhandler_do_post",
+      "dashboard_db_connect",
+      "dashboard_get_agent_logs",
+      "dashboard_get_board_tasks",
+      "dashboard_graphify_build",
+      "dashboard_graphify_query",
+      "dashboard_log_agent_task",
+      "dashboard_main",
+      "dashboard_rationale_169",
+      "dashboard_rationale_185",
+      "dashboard_rationale_303",
+      "dashboard_rationale_335",
+      "dashboard_run_agent_prompt",
+      "dashboard_update_board_task",
+      "dashboard_utc_now"
+    ],
+    "1": [
+      "agents_cashflow",
+      "agents_cashflow_income_log",
+      "agents_dev",
+      "agents_dev_dashboard",
+      "agents_orchestrator",
+      "agents_orchestrator_agent_logs_db",
+      "agents_orchestrator_board_db",
+      "agents_orchestrator_log_task",
+      "agents_orchestrator_telegram",
+      "agents_reach",
+      "agents_scout",
+      "agents_scribe"
+    ],
+    "2": [
+      "index_html_agents_array",
+      "index_html_cashflow",
+      "index_html_dev",
+      "index_html_model_claude",
+      "index_html_model_hermes",
+      "index_html_model_openclaw",
+      "index_html_model_opencode",
+      "index_html_orchestrator",
+      "index_html_reach",
+      "index_html_scout",
+      "index_html_scribe"
+    ],
+    "3": [
+      "index_html_active_agent",
+      "index_html_chat_history",
+      "index_html_eschtml",
+      "index_html_panel_chat",
+      "index_html_panel_controls",
+      "index_html_panel_memory",
+      "index_html_panel_tasks",
+      "index_html_renderchat",
+      "index_html_selectagent",
+      "index_html_sendmsg"
+    ],
+    "4": [
+      "dashboard_dashboardhandler",
+      "dashboard_dashboardhandler_do_get",
+      "dashboard_dashboardhandler_do_options",
+      "dashboard_dashboardhandler_log_message",
+      "dashboard_dashboardhandler_send_html",
+      "dashboard_dashboardhandler_send_json",
+      "dashboard_graphify_status",
+      "dashboard_rationale_279"
+    ],
+    "5": [
+      "index_html_api_health",
+      "index_html_healthcheck",
+      "index_html_heartbeat_timer",
+      "index_html_init",
+      "index_html_loadboard",
+      "index_html_loadlogs",
+      "index_html_renderagentbar",
+      "index_html_startclock"
+    ],
+    "6": [
+      "index_html_graph3d",
+      "index_html_panel_graphify"
+    ],
+    "7": [
+      "shared_log_helper",
+      "shared_log_helper_rationale_1"
+    ],
+    "8": [
+      "shared_log_task_local",
+      "shared_log_task_local_resolve_python"
+    ],
+    "9": [
+      "index_html_agentos"
+    ],
+    "10": [
+      "index_html_sb_board"
+    ],
+    "11": [
+      "index_html_sb_goals"
+    ],
+    "12": [
+      "index_html_sb_logs"
+    ]
+  },
+  "cohesion": {
+    "0": 0.22058823529411764,
+    "1": 0.19696969696969696,
+    "2": 0.21818181818181817,
+    "3": 0.2222222222222222,
+    "4": 0.32142857142857145,
+    "5": 0.25,
+    "6": 1.0,
+    "7": 1.0,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 1.0
+  },
+  "gods": [
+    {
+      "id": "dashboard_utc_now",
+      "label": "utc_now()",
+      "degree": 9
+    },
+    {
+      "id": "agents_orchestrator",
+      "label": "Orchestrator Agent",
+      "degree": 8
+    },
+    {
+      "id": "dashboard_dashboardhandler",
+      "label": "DashboardHandler",
+      "degree": 7
+    },
+    {
+      "id": "index_html_agents_array",
+      "label": "AGENTS Configuration Array",
+      "degree": 7
+    },
+    {
+      "id": "index_html_selectagent",
+      "label": "selectAgent Function",
+      "degree": 6
+    },
+    {
+      "id": "dashboard_db_connect",
+      "label": "db_connect()",
+      "degree": 5
+    },
+    {
+      "id": "dashboard_run_agent_prompt",
+      "label": "run_agent_prompt()",
+      "degree": 5
+    },
+    {
+      "id": "index_html_init",
+      "label": "init Function",
+      "degree": 5
+    },
+    {
+      "id": "dashboard_update_board_task",
+      "label": "update_board_task()",
+      "degree": 4
+    },
+    {
+      "id": "dashboard_create_board_task",
+      "label": "create_board_task()",
+      "degree": 4
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Orchestrator Agent",
+      "target": "Cashflow Agent",
+      "source_files": [
+        "agents/orchestrator/AGENTS.md",
+        "agents/cashflow/AGENTS.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `Cashflow Agent` unexpectedly reaches hub `Orchestrator Agent`"
+    },
+    {
+      "source": "Orchestrator Agent",
+      "target": "Dev Agent",
+      "source_files": [
+        "agents/orchestrator/AGENTS.md",
+        "agents/dev/AGENTS.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `Dev Agent` unexpectedly reaches hub `Orchestrator Agent`"
+    },
+    {
+      "source": "Orchestrator Agent",
+      "target": "Reach Agent",
+      "source_files": [
+        "agents/orchestrator/AGENTS.md",
+        "agents/reach/AGENTS.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `Reach Agent` unexpectedly reaches hub `Orchestrator Agent`"
+    },
+    {
+      "source": "Orchestrator Agent",
+      "target": "Scout Agent",
+      "source_files": [
+        "agents/orchestrator/AGENTS.md",
+        "agents/scout/AGENTS.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `Scout Agent` unexpectedly reaches hub `Orchestrator Agent`"
+    },
+    {
+      "source": "Orchestrator Agent",
+      "target": "Scribe Agent",
+      "source_files": [
+        "agents/orchestrator/AGENTS.md",
+        "agents/scribe/AGENTS.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 4445
+  }
+}
