@@ -149,7 +149,7 @@ export function PreferencesProvider({ children, autoSave = true, syncInterval = 
       save()
     }, syncInterval)
     return () => clearInterval(interval)
-  }, [autoSave, syncInterval, preferences])
+  }, [autoSave, syncInterval, save])
 
   // Save on page unload
   useEffect(() => {
@@ -186,7 +186,7 @@ export function PreferencesProvider({ children, autoSave = true, syncInterval = 
       const imported = JSON.parse(json)
       setPreferences({ ...defaultPreferences, ...imported })
       save()
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Invalid preferences JSON')
     }
   }

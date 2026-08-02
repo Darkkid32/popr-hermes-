@@ -103,12 +103,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 }
 
+// eslint-disable-next-line react/display-name
+// eslint-disable-next-line react/only-export-components
 export function withErrorBoundary<P extends object>(
   WrappedComponent: React.ComponentType<P>,
   errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>
 ): React.FC<P> {
-  // eslint-disable-next-line react/display-name
-  // eslint-disable-next-line react/only-export-components
   return (props: P) => (
     <ErrorBoundary {...errorBoundaryProps}>
       <WrappedComponent {...props} />

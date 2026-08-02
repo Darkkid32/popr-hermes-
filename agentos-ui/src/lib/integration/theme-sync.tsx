@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import type { ReactNode } from 'react'
 
 export type Theme = 'dark' | 'light' | 'system'
@@ -46,13 +46,13 @@ export function ThemeProvider({ children, initialTheme = 'system', initialConfig
   })
   const [resolvedTheme, setResolvedTheme] = useState<'dark' | 'light'>('dark')
 
-  const updateResolvedTheme = () => {
+  const updateResolvedTheme = useCallback(() => {
     if (config.theme === 'system') {
       setResolvedTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
     } else {
       setResolvedTheme(config.theme)
     }
-  }
+  }, [config.theme])
 
   useEffect(() => {
     updateResolvedTheme()
@@ -63,7 +63,7 @@ export function ThemeProvider({ children, initialTheme = 'system', initialConfig
       mediaQuery.addEventListener('change', handler)
       return () => mediaQuery.removeEventListener('change', handler)
     }
-  }, [config.theme, config.respectSystemPreference])
+  }, [config.theme, config.respectSystemPreference, updateResolvedTheme])
 
   useEffect(() => {
     const root = document.documentElement

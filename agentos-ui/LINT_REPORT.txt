@@ -1,0 +1,417 @@
+$ oxlint
+
+  ! eslint(no-unused-expressions): Expected expression to be used
+    ,-[src/pages/ModelsOverview.tsx:37:7]
+ 36 |       const y = H - (d.cost / maxCost) * (H - 40) - 20
+ 37 |       i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+    :       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 38 |     })
+    `----
+  help: Consider using this expression or removing it
+
+  ! eslint(no-unused-expressions): Expected expression to be used
+    ,-[src/pages/ModelsOverview.tsx:48:7]
+ 47 |       const y = H - (d.requests / maxRequests) * (H - 40) - 20
+ 48 |       i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+    :       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 49 |     })
+    `----
+  help: Consider using this expression or removing it
+
+  ! react-hooks(exhaustive-deps): React Hook useEffect contains a call to setState. Without a list of dependencies, this can lead to an infinite chain of updates.
+    ,-[src/lib/hooks/useLive.ts:24:3]
+ 23 | 
+ 24 |   useEffect(() => {
+    :   ^^^^^^^^
+ 25 |     if (!isConfigured()) {
+    `----
+  help: Consider adding an empty list of dependencies to make it clear which values are intended to be stable.
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[src/lib/integration/environment-provider.tsx:48:17]
+ 47 | 
+ 48 | export function useEnvironment() {
+    :                 ^^^^^^^^^^^^^^^
+ 49 |   const context = useContext(EnvironmentContext)
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/environment-provider.tsx:182:17]
+ 181 | 
+ 182 | export function useEnvironmentInfo() {
+     :                 ^^^^^^^^^^^^^^^^^^^
+ 183 |   return useEnvironment()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Move your React context(s) to a separate file.
+    ,-[src/lib/integration/environment-provider.tsx:46:14]
+ 45 | 
+ 46 | export const EnvironmentContext = createContext<EnvironmentProviderState | null>(null)
+    :              ^^^^^^^^^^^^^^^^^^^
+ 47 | 
+    `----
+
+  ! eslint(no-unused-expressions): Expected expression to be used
+    ,-[src/pages/ModelsBenchmarks.tsx:66:9]
+ 65 |         const y = centerY + Math.sin(angle) * (radius * r / 4)
+ 66 |         i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+    :         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 67 |       })
+    `----
+  help: Consider using this expression or removing it
+
+  ! eslint(no-unused-expressions): Expected expression to be used
+    ,-[src/pages/ModelsBenchmarks.tsx:83:9]
+ 82 |         const y = centerY + Math.sin(angle) * radius * value
+ 83 |         i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+    :         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 84 |       })
+    `----
+  help: Consider using this expression or removing it
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[src/lib/integration/workspace-context-provider.tsx:30:17]
+ 29 | 
+ 30 | export function useWorkspaceContext() {
+    :                 ^^^^^^^^^^^^^^^^^^^
+ 31 |   const context = useContext(WorkspaceContext)
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/workspace-context-provider.tsx:122:17]
+ 121 | 
+ 122 | export function useWorkspaceContextState() {
+     :                 ^^^^^^^^^^^^^^^^^^^^^^^^
+ 123 |   return useWorkspaceContext()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Move your React context(s) to a separate file.
+    ,-[src/lib/integration/workspace-context-provider.tsx:28:14]
+ 27 | 
+ 28 | export const WorkspaceContext = createContext<WorkspaceContextState | null>(null)
+    :              ^^^^^^^^^^^^^^^^^
+ 29 | 
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[src/lib/integration/authorization-context.tsx:77:17]
+ 76 | 
+ 77 | export function useAuthorization() {
+    :                 ^^^^^^^^^^^^^^^^^
+ 78 |   const context = useContext(AuthorizationContext)
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/authorization-context.tsx:174:17]
+ 173 | 
+ 174 | export function useAuthorizationState() {
+     :                 ^^^^^^^^^^^^^^^^^^^^^^
+ 175 |   return useAuthorization()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/authorization-context.tsx:178:17]
+ 177 | 
+ 178 | export function useCanAccess(resource: string, action: string, context?: Record<string, unknown>) {
+    :                 ^^^^^^^^^^^^^
+ 179 |   const { canAccess } = useAuthorization()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/authorization-context.tsx:183:17]
+ 182 | 
+ 183 | export function useEvaluateAccess(resource: string, action: string, context?: Record<string, unknown>) {
+    :                 ^^^^^^^^^^^^^^^^^^
+ 184 |   const { evaluate } = useAuthorization()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/authorization-context.tsx:188:17]
+ 187 | 
+ 188 | export function usePolicies() {
+    :                 ^^^^^^^^^^^^
+ 189 |   const { policies } = useAuthorization()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/authorization-context.tsx:193:17]
+ 192 | 
+ 193 | export function useAddPolicy() {
+    :                 ^^^^^^^^^^^^
+ 194 |   const { addPolicy } = useAuthorization()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/authorization-context.tsx:198:17]
+ 197 | 
+ 198 | export function useRemovePolicy() {
+    :                 ^^^^^^^^^^^^^^^
+ 199 |   const { removePolicy } = useAuthorization()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Move your React context(s) to a separate file.
+    ,-[src/lib/integration/authorization-context.tsx:75:14]
+ 74 | 
+ 75 | export const AuthorizationContext = createContext<AuthorizationState | null>(null)
+    :              ^^^^^^^^^^^^^^^^^^^^^
+ 76 | 
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[src/lib/integration/auth-context.tsx:46:17]
+ 45 | 
+ 46 | export function useAuth() {
+    :                 ^^^^^^^^
+ 47 |   const context = useContext(AuthContext)
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/auth-context.tsx:164:17]
+ 163 | 
+ 164 | export function useRequireAuth() {
+     :                 ^^^^^^^^^^^^^^^
+ 165 |   const { isAuthenticated, user } = useAuth()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/auth-context.tsx:172:17]
+ 171 | 
+ 172 | export function useRequirePermission(permission: string) {
+    :                 ^^^^^^^^^^^^^^^^^^^^
+ 173 |   const { checkPermission } = usePermissionStore()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/auth-context.tsx:180:17]
+ 179 | 
+ 180 | export function useRequireRole(role: string) {
+    :                 ^^^^^^^^^^^^^^^
+ 181 |   const { checkRole } = usePermissionStore()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Move your React context(s) to a separate file.
+    ,-[src/lib/integration/auth-context.tsx:44:14]
+ 43 | 
+ 44 | export const AuthContext = createContext<AuthState | null>(null)
+    :              ^^^^^^^^^^^^^
+ 45 | 
+    `----
+
+  ! react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'state.user', 'state', and 'state.isAuthenticated'
+     ,-[src/lib/integration/auth-context.tsx:135:6]
+  65 |     const newState: AuthState = {
+  66 |       ...state,
+  67 |       login: async (credentials: { email: string; password: string }) => {
+  68 |         setState((p: AuthState) => ({ ...p, isLoading: true, error: null }))
+  69 |         try {
+  70 |           await new Promise(resolve => setTimeout(resolve, 1000))
+  71 |           const user: AuthUser = {
+  72 |             id: 'user-1',
+  73 |             email: credentials.email,
+  74 |             name: credentials.email.split('@')[0],
+  75 |             roles: ['user'],
+  76 |             permissions: ['read', 'write'],
+  77 |             lastLogin: Date.now(),
+  78 |           }
+  79 |           setState((p: AuthState) => ({
+  80 |             ...p,
+  81 |             user,
+  82 |             isAuthenticated: true,
+  83 |             isLoading: false,
+  84 |           }))
+  85 |           return user
+  86 |         } catch (error) {
+  87 |           setState((p: AuthState) => ({
+  88 |             ...p,
+  88 |             isLoading: false,
+  90 |             error: error as Error,
+  91 |           }))
+  92 |           throw error
+  93 |         }
+  94 |       },
+  95 |       logout: async () => {
+  96 |         setState((p: AuthState) => ({ ...p, isLoading: true }))
+  97 |         try {
+  98 |           await new Promise(resolve => setTimeout(resolve, 500))
+  99 |           setState((p: AuthState) => ({
+  100 |             ...p,
+  101 |             user: null,
+  102 |             isAuthenticated: false,
+  103 |             isLoading: false,
+  104 |           }))
+  105 |         } catch (error) {
+  106 |           setState((p: AuthState) => ({
+  107 |             ...p,
+  108 |             isLoading: false,
+  109 |             error: error as Error,
+  110 |           }))
+  111 |         }
+  112 |       },
+  113 |       refreshUser: async () => {
+  114 |         if (!state.isAuthenticated) return null
+  115 |         try {
+  116 |           await new Promise(resolve => setTimeout(resolve, 500))
+  117 |           const user = { ...state.user!, lastLogin: Date.now() } as AuthUser
+  118 |           setState((p: AuthState) => ({ ...p, user }))
+  119 |           return user
+  120 |         } catch {
+  121 |           return null
+  122 |         }
+  123 |       },
+  124 |       updateUser: (updates: Partial<AuthUser>) => {
+  125 |         setState((p: AuthState) => ({
+  126 |           ...p,
+  127 |           user: p.user ? { ...p.user, ...updates } : null,
+  128 |         }))
+  129 |       },
+  130 |       setUser: (user: AuthUser | null) => setState((p: AuthState) => ({ ...p, user, isAuthenticated: !!user })),
+  131 |       setLoading: (loading: boolean) => setState((p: AuthState) => ({ ...p, isLoading: loading })),
+  132 |       setError: (error: Error | null) => setState((p: AuthState) => ({ ...p, error })),
+  133 |     }
+  134 |     setState(newState)
+  135 |   }, [])
+     :      ^^
+  `----
+  help: Either include it or remove the dependency array.
+
+  ! react-hooks(exhaustive-deps): React Hook useEffect has a missing dependency: 'state'
+     ,-[src/lib/integration/auth-context.tsx:155:6]
+ 151 |     const interval = setInterval(() => {
+ 152 |       state.refreshUser()
+ 153 |     }, refreshInterval)
+ 154 |     return () => clearInterval(interval)
+  155 |   }, [autoRefresh, refreshInterval, state.isAuthenticated, state.refreshUser])
+     :      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 156 | 
+  `----
+  help: Either include it or remove the dependency array.
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[src/lib/integration/theme-sync.tsx:28:17]
+ 27 | 
+ 28 | export function useTheme() {
+    :                 ^^^^^^^^^^
+ 29 |   const context = useContext(ThemeContext)
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/theme-sync.tsx:126:17]
+ 125 | 
+ 126 | export function useThemeState() {
+     :                 ^^^^^^^^^^^^^^
+ 127 |   return useTheme()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Move your React context(s) to a separate file.
+    ,-[src/lib/integration/theme-sync.tsx:26:14]
+ 25 | 
+ 26 | export const ThemeContext = createContext<ThemeProviderState | null>(null)
+    :              ^^^^^^^^^^^^^^
+ 27 | 
+    `----
+
+  ! react-hooks(exhaustive-deps): React Hook useEffect has a missing dependency: 'updateResolvedTheme'
+    ,-[src/lib/integration/theme-sync.tsx:66:6]
+ 57 |   useEffect(() => {
+ 58 |     updateResolvedTheme()
+  59 | 
+  60 |     if (config.theme === 'system' && config.respectSystemPreference) {
+  61 |       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+  62 |       const handler = () => updateResolvedTheme()
+  63 |       mediaQuery.addEventListener('change', handler)
+  64 |       return () => mediaQuery.removeEventListener('change', handler)
+  65 |     }
+  66 |   }, [config.theme, config.respectSystemPreference])
+     :      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  67 | 
+  `----
+  help: Either include it or remove the dependency array.
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[src/lib/integration/keyboard-shortcuts.tsx:71:17]
+ 70 | 
+ 71 | export function useKeyboardShortcuts() {
+    :                 ^^^^^^^^^^^^^^^^^^^^
+ 72 |   const context = useContext(KeyboardShortcutsContext)
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/keyboard-shortcuts.tsx:231:17]
+ 230 | 
+ 231 | export function useKeyboardShortcutsState() {
+     :                 ^^^^^^^^^^^^^^^^^^^^^^^
+ 232 |   return useKeyboardShortcuts()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/keyboard-shortcuts.tsx:235:17]
+ 234 | 
+ 235 | export function registerKeyboardShortcut(_shortcut: KeyboardShortcut) {
+    :                 ^^^^^^^^^^^^^^^^^^^^^^^^
+ 236 |   // eslint-disable-next-line react/only-export-components
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/keyboard-shortcuts.tsx:241:17]
+ 240 | 
+ 241 | export function unregisterKeyboardShortcut(_id: string) {
+    :                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 242 |   // eslint-disable-next-line react/only-export-components
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[src/lib/integration/error-boundary.tsx:106:17]
+ 105 | 
+ 106 | export function withErrorBoundary<P extends object>(
+    :                 ^^^^^^^^^^^^^^^^^^
+ 107 |   WrappedComponent: React.ComponentType<P>,
+    `----
+
+  ! eslint(no-unused-vars): Catch parameter 'error' is caught but never used.
+     ,-[src/lib/integration/preferences.tsx:189:14]
+ 188 |       save()
+ 189 |     } catch (error) {
+    :              ^^|^^
+    :                `-- 'error' is declared here
+ 190 |       throw new Error('Invalid preferences JSON')
+    `----
+  help: Consider handling this error.
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[src/lib/integration/preferences.tsx:89:17]
+ 88 | 
+ 89 | export function usePreferences() {
+    :                 ^^^^^^^^^^^^^^^
+ 90 |   const context = useContext(PreferencesContext)
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+     ,-[src/lib/integration/preferences.tsx:215:17]
+ 214 | 
+ 215 | export function usePreferencesState() {
+     :                 ^^^^^^^^^^^^^^^^^^^
+ 216 |   return usePreferences()
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Move your React context(s) to a separate file.
+    ,-[src/lib/integration/preferences.tsx:87:14]
+ 86 | 
+ 87 | export const PreferencesContext = createContext<PreferencesState | null>(null)
+    :              ^^^^^^^^^^^^^^^^^^^
+ 88 | 
+    `----
+
+  ! react-hooks(exhaustive-deps): React Hook useEffect has a missing dependency: 'save'
+     ,-[src/lib/integration/preferences.tsx:152:6]
+ 148 |     const interval = setInterval(() => {
+ 149 |       save()
+ 150 |     }, syncInterval)
+ 151 |     return () => clearInterval(interval)
+ 152 |   }, [autoSave, syncInterval, preferences])
+     :      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 153 | 
+  `----
+  help: Either include it or remove the dependency array.
+
+Found 40 warnings and 0 errors.
+Finished in 160ms on 122 files with 104 rules using 6 threads.
