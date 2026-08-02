@@ -2,6 +2,7 @@ import { MEMORY_STATS, GRAPH_COMMUNITIES, MEMORY_NOTES, MEMORY_NAV_LINKS } from 
 import { useMemoryStore } from '../stores/MemoryStore'
 import { Canvas } from '../components/Canvas'
 import { useCallback } from 'react'
+import { StatusPills } from '../components/ui'
 
 export function MemoryOverview() {
   const { activeTab, setActiveTab } = useMemoryStore()
@@ -80,12 +81,12 @@ export function MemoryOverview() {
 
   return (
     <div className="page-body">
-      <div className="status-pills" style={{ paddingLeft: 0, paddingRight: 0 }}>
-        <span className="badge badge-green"><span className="dot dot-green" /> {MEMORY_STATS.totalNotes.toLocaleString()} memories</span>
-        <span className="badge badge-cyan"><span className="mono">Obsidian Vault</span></span>
-        <span className="badge badge-purple"><span className="mono">{MEMORY_STATS.communities} communities</span></span>
-        <span className="badge badge-gray"><span className="mono">last sync {MEMORY_STATS.lastSync}</span></span>
-      </div>
+      <StatusPills pills={[
+        { label: <><span className="dot dot-green" aria-hidden="true" /> {MEMORY_STATS.totalNotes.toLocaleString()} memories</>, tone: 'green', dot: true },
+        { label: <><span className="mono">Obsidian Vault</span></>, tone: 'cyan' },
+        { label: <><span className="mono">{MEMORY_STATS.communities} communities</span></>, tone: 'purple' },
+        { label: <><span className="mono">last sync {MEMORY_STATS.lastSync}</span></>, tone: 'gray' },
+      ]} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
         {[
