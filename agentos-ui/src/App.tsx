@@ -8,6 +8,7 @@ import { LoginPage } from './pages/LoginPage'
 import { OrganizationLayout, OrganizationOverview, OrganizationMembers, OrganizationTeams, OrganizationRoles, OrganizationWorkspaces, OrganizationProjects, OrganizationEnvironments, OrganizationLicenses, OrganizationQuotas, OrganizationActivity, OrganizationSettings } from './pages/organization'
 import { SecurityLayout, SecurityOverview, SecurityUsers, SecurityRoles, SecurityApiKeys, SecuritySecrets, SecurityCertificates, SecurityPolicies, SecuritySessions, SecurityAudit, SecurityThreats, SecurityCompliance, SecuritySettings } from './pages/security'
 import { ObservabilityLayout, ObservabilityOverview, ObservabilityMetrics, ObservabilityDashboards, ObservabilityLogs, ObservabilityTraces, ObservabilityEvents, ObservabilityAlerts, ObservabilityIncidents, ObservabilityServices, ObservabilityInfrastructure, ObservabilityHealth, ObservabilityPerformance, ObservabilityCapacity, ObservabilityAnalytics, ObservabilitySettings } from './pages/observability'
+import { AutomationLayout, AutomationOverview, AutomationWorkflows, AutomationBuilder, AutomationTriggers, AutomationActions, AutomationExecutions, AutomationSchedules, AutomationJobs, AutomationQueues, AutomationTemplates, AutomationVariables, AutomationSecrets, AutomationHistory, AutomationAnalytics, AutomationSettingsPage } from './pages/automation'
 import { AgentWorkspaceRoute } from './pages/AgentWorkspace'
 import { Goals } from './pages/Goals'
 import { Memory } from './pages/Memory'
@@ -33,6 +34,7 @@ const PAGE_META: Record<string, PageMeta> = {
   '/org': { roman: 'XVII', eyebrow: 'Organization', title: 'Organization Workspace', sub: 'Members, teams, roles, workspaces, projects, environments, licenses, quotas, and the full activity trail.', kind: 'self' },
   '/security': { roman: 'XVIII', eyebrow: 'Security', title: 'Security Workspace', sub: 'Users, roles, keys, secrets, certificates, policies, sessions, audit, threats, compliance, and security settings.', kind: 'self' },
   '/observability': { roman: 'XIX', eyebrow: 'Observability', title: 'Observability Workspace', sub: 'Metrics, dashboards, logs, traces, events, alerts, incidents, services, infrastructure, health, performance, capacity, analytics, and settings.', kind: 'self' },
+  '/automation': { roman: 'XX', eyebrow: 'Automation', title: 'Automation Workspace', sub: 'Workflows, triggers, actions, executions, schedules, jobs, queues, templates, variables, secrets, history, analytics, and settings.', kind: 'self' },
   '/goals': { roman: 'II', eyebrow: 'Self · Goals', title: 'Goals', sub: 'Quarterly objectives. Auto-tracked from your vault, agent runtimes, and operator workflows.', kind: 'self' },
   '/memory': { roman: 'III', eyebrow: 'Self · Memory', title: 'Memory', sub: 'Your second brain. Vault, notes, Omi captures, and the live knowledge graph that connects them all.', kind: 'self' },
   '/hermes': { roman: 'IV', eyebrow: 'Agent · Hermes', title: 'Hermes', sub: 'Local-first agent. Sessions, skills, kanban, memory, and a chat line you can drive from anywhere.', kind: 'agent' },
@@ -129,6 +131,23 @@ function AppShell() {
                 <Route path="capacity" element={<ObservabilityCapacity />} />
                 <Route path="analytics" element={<ObservabilityAnalytics />} />
                 <Route path="settings" element={<ObservabilitySettings />} />
+              </Route>
+              <Route path="/automation" element={<AutomationLayout />}>
+                <Route index element={<AutomationOverview />} />
+                <Route path="workflows" element={<AutomationWorkflows />} />
+                <Route path="builder" element={<AutomationBuilder />} />
+                <Route path="triggers" element={<AutomationTriggers />} />
+                <Route path="actions" element={<AutomationActions />} />
+                <Route path="executions" element={<AutomationExecutions />} />
+                <Route path="schedules" element={<AutomationSchedules />} />
+                <Route path="jobs" element={<AutomationJobs />} />
+                <Route path="queues" element={<AutomationQueues />} />
+                <Route path="templates" element={<AutomationTemplates />} />
+                <Route path="variables" element={<AutomationVariables />} />
+                <Route path="secrets" element={<AutomationSecrets />} />
+                <Route path="history" element={<AutomationHistory />} />
+                <Route path="analytics" element={<AutomationAnalytics />} />
+                <Route path="settings" element={<AutomationSettingsPage />} />
               </Route>
               <Route path="/org" element={<OrganizationLayout />}>
                 <Route index element={<OrganizationOverview />} />
