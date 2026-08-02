@@ -67,15 +67,15 @@ function AgentFigure({ agentId, autoRotate, onClick }: { agentId: AgentMeshId; a
         <meshBasicMaterial color={c.primary} transparent opacity={0.18} side={THREE.DoubleSide} />
       </mesh>
 
-      {agentId === 'hermes' && <HermesFigure mat={mat} accentMat={accentMat} />}
-      {agentId === 'claude' && <ClaudeFigure mat={mat} accentMat={accentMat} />}
-      {agentId === 'opencode' && <OpenCodeFigure mat={mat} accentMat={accentMat} />}
-      {agentId === 'openclaw' && <OpenClawFigure mat={mat} accentMat={accentMat} />}
+      {agentId === 'hermes' && <HermesFigure mat={mat as any} accentMat={accentMat as any} />}
+      {agentId === 'claude' && <ClaudeFigure mat={mat as any} accentMat={accentMat as any} />}
+      {agentId === 'opencode' && <OpenCodeFigure mat={mat as any} accentMat={accentMat as any} />}
+      {agentId === 'openclaw' && <OpenClawFigure mat={mat as any} accentMat={accentMat as any} />}
     </group>
   )
 }
 
-function HermesFigure({ mat, accentMat }: { mat: THREE.Material; accentMat: THREE.Material; }) {
+function HermesFigure({ mat, accentMat }: { mat: any; accentMat: any; }) {
   return (
     <group>
       {/* body — orb core */}
@@ -95,7 +95,7 @@ function HermesFigure({ mat, accentMat }: { mat: THREE.Material; accentMat: THRE
   )
 }
 
-function ClaudeFigure({ mat, accentMat }: { mat: THREE.Material; accentMat: THREE.Material; }) {
+function ClaudeFigure({ mat, accentMat }: { mat: any; accentMat: any; }) {
   return (
     <group>
       {/* head */}
@@ -116,7 +116,7 @@ function ClaudeFigure({ mat, accentMat }: { mat: THREE.Material; accentMat: THRE
   )
 }
 
-function OpenCodeFigure({ mat, accentMat }: { mat: THREE.Material; accentMat: THREE.Material; }) {
+function OpenCodeFigure({ mat, accentMat }: { mat: any; accentMat: any; }) {
   return (
     <group>
       {/* cube body */}
@@ -133,7 +133,7 @@ function OpenCodeFigure({ mat, accentMat }: { mat: THREE.Material; accentMat: TH
   )
 }
 
-function OpenClawFigure({ mat, accentMat }: { mat: THREE.Material; accentMat: THREE.Material; }) {
+function OpenClawFigure({ mat, accentMat }: { mat: any; accentMat: any; }) {
   return (
     <group>
       {/* central core */}
