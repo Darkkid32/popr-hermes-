@@ -14,6 +14,10 @@ import { Logs } from './pages/Logs'
 import { Integrations } from './pages/Integrations'
 import { Tools } from './pages/Tools'
 import { SettingsPage } from './pages/Settings'
+import { Models } from './pages/Models'
+import { Plugins } from './pages/Plugins'
+import { Skills } from './pages/Skills'
+import { MCP } from './pages/MCP'
 
 interface PageMeta {
   roman: string
@@ -40,6 +44,10 @@ const PAGE_META: Record<string, PageMeta> = {
   '/integrations': { roman: 'XIV', eyebrow: 'Integrations', title: 'Connected surfaces', sub: 'Chats, runtimes, and external surfaces wired into AgentOS.', kind: 'self' },
   '/tools': { roman: 'XV', eyebrow: 'Tools', title: 'Runtime capabilities', sub: 'Installed engines, bridges, and operator-facing capabilities powering each agent.', kind: 'self' },
   '/settings': { roman: 'XVI', eyebrow: 'Settings', title: 'System settings', sub: 'Configure AgentOS runtime, model, and operator preferences.', kind: 'self' },
+  '/models': { roman: 'XVII', eyebrow: 'Models', title: 'Model Catalog', sub: 'Local and cloud LLMs, routing rules, endpoints, and benchmarks.', kind: 'self' },
+  '/plugins': { roman: 'XVIII', eyebrow: 'Plugins', title: 'Plugin System', sub: 'Installed plugins, marketplace, permissions, and sandbox configuration.', kind: 'self' },
+  '/skills': { roman: 'XIX', eyebrow: 'Skills', title: 'Skill Engine', sub: 'Installed skills, templates, builder, and execution runtime.', kind: 'self' },
+  '/mcp': { roman: 'XX', eyebrow: 'MCP', title: 'MCP Workspace', sub: 'Model Context Protocol servers, tools, resources, and marketplace.', kind: 'self' },
 }
 
 function matchMeta(pathname: string): PageMeta {
@@ -105,6 +113,14 @@ function AppShell() {
               <Route path="/integrations" element={<Integrations />} />
               <Route path="/tools" element={<Tools />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/models" element={<Models />} />
+              <Route path="/models/:tab" element={<Models />} />
+              <Route path="/plugins" element={<Plugins />} />
+              <Route path="/plugins/:tab" element={<Plugins />} />
+              <Route path="/skills" element={<Skills />} />
+              <Route path="/skills/:tab" element={<Skills />} />
+              <Route path="/mcp" element={<MCP />} />
+              <Route path="/mcp/:tab" element={<MCP />} />
               <Route path="/hermes" element={<AgentWorkspaceRoute agentId="hermes" />} />
               <Route path="/hermes/:tab" element={<AgentWorkspaceRoute agentId="hermes" />} />
               <Route path="/claude" element={<AgentWorkspaceRoute agentId="claude" />} />

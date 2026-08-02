@@ -23,6 +23,10 @@ export function Sidebar() {
     if (id === 'opencode') return '/opencode'
     if (id === 'openclaw') return '/openclaw'
     if (id === 'gemini') return '/gemini'
+    if (id === 'models') return '/models'
+    if (id === 'plugins') return '/plugins'
+    if (id === 'skills') return '/skills'
+    if (id === 'mcp') return '/mcp'
     return '/' + id
   }
 

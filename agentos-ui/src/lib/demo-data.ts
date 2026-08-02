@@ -419,7 +419,7 @@ export const CAPABILITIES: Capability[] = [
 export interface SettingRow {
   label: string
   value: string
-  tone: 'cyan' | 'green' | 'dim' | 'default'
+  tone: 'cyan' | 'green' | 'purple' | 'pink' | 'amber' | 'red' | 'dim' | 'default'
 }
 
 export const RUNTIME_SETTINGS: SettingRow[] = [
@@ -549,6 +549,10 @@ export const NAV_LINKS: NavLink[] = [
   { id: 'integrations', label: 'Integrations', icon: '⊕', group: 'self' },
   { id: 'tools', label: 'Tools', icon: '✦', group: 'self' },
   { id: 'settings', label: 'Settings', icon: '⚙', group: 'self' },
+  { id: 'models', label: 'Models', icon: '⬢', group: 'self' },
+  { id: 'plugins', label: 'Plugins', icon: '✦', group: 'self' },
+  { id: 'skills', label: 'Skills', icon: '⌘', group: 'self' },
+  { id: 'mcp', label: 'MCP', icon: '⬢', group: 'self' },
   { id: 'fleet', label: 'Hermes', icon: 'H', group: 'agent', status: 'green' },
   { id: 'claude', label: 'Claude', icon: 'C', group: 'agent', status: 'green' },
   { id: 'opencode', label: 'OpenCode', icon: 'O', group: 'agent', status: 'amber' },
