@@ -533,7 +533,7 @@ export interface NavLink {
   icon?: string
   badge?: string
   badgeColor?: string
-  group?: 'self' | 'agent' | 'org' | 'security'
+  group?: 'self' | 'agent' | 'org' | 'security' | 'observability'
   status?: 'green' | 'amber' | 'red' | 'gray'
 }
 
@@ -556,6 +556,7 @@ export const NAV_LINKS: NavLink[] = [
   { id: 'gemini', label: 'Gemini', icon: 'G', group: 'agent', status: 'gray' },
   { id: 'org', label: 'Organization', icon: '◈', group: 'org' },
   { id: 'security', label: 'Security', icon: '🛡', group: 'security' },
+  { id: 'observability', label: 'Observability', icon: '📊', group: 'observability' },
 ]
 
 export type PageId = NavLink['id']
