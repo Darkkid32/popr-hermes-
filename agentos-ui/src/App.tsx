@@ -4,22 +4,29 @@ import { NewAgentModal } from './components/NewAgentModal'
 import { ToastStack } from './components/ToastStack'
 import { ReconnectBanner } from './components/realtime/ReconnectBanner'
 import { ConnectionIndicator } from './components/realtime/ConnectionIndicator'
-import { MissionControl } from './pages/MissionControl'
-import { AgentWorkspaceRoute } from './pages/AgentWorkspace'
-import { Goals } from './pages/Goals'
-import { Memory } from './pages/Memory'
-import { Workflows } from './pages/Workflows'
-import { Graphify } from './pages/Graphify'
-import { Alerts } from './pages/Alerts'
-import { Analytics } from './pages/Analytics'
-import { Logs } from './pages/Logs'
-import { Integrations } from './pages/Integrations'
-import { Tools } from './pages/Tools'
-import { SettingsPage } from './pages/Settings'
-import { Models } from './pages/Models'
-import { Plugins } from './pages/Plugins'
-import { Skills } from './pages/Skills'
-import { MCP } from './pages/MCP'
+import { Suspense, lazy } from 'react'
+
+// Workspace lazy loading - code splitting
+const LazyMissionControl = lazy(() => import('./pages/MissionControl').then(m => ({ default: m.MissionControl })))
+const LazyAgentWorkspace = lazy(() => import('./pages/AgentWorkspace').then(m => ({ default: m.AgentWorkspaceRoute })))
+const LazyGoals = lazy(() => import('./pages/Goals').then(m => ({ default: m.Goals })))
+const LazyMemory = lazy(() => import('./pages/Memory').then(m => ({ default: m.Memory })))
+const LazyWorkflows = lazy(() => import('./pages/Workflows').then(m => ({ default: m.Workflows })))
+const LazyGraphify = lazy(() => import('./pages/Graphify').then(m => ({ default: m.Graphify })))
+const LazyAlerts = lazy(() => import('./pages/Alerts').then(m => ({ default: m.Alerts })))
+const LazyAnalytics = lazy(() => import('./pages/Analytics').then(m => ({ default: m.Analytics })))
+const LazyLogs = lazy(() => import('./pages/Logs').then(m => ({ default: m.Logs })))
+const LazyIntegrations = lazy(() => import('./pages/Integrations').then(m => ({ default: m.Integrations })))
+const LazyTools = lazy(() => import('./pages/Tools').then(m => ({ default: m.Tools })))
+const LazySettings = lazy(() => import('./pages/Settings').then(m => ({ default: m.SettingsPage })))
+const LazyModels = lazy(() => import('./pages/Models').then(m => ({ default: m.Models })))
+const LazyPlugins = lazy(() => import('./pages/Plugins').then(m => ({ default: m.Plugins })))
+const LazySkills = lazy(() => import('./pages/Skills').then(m => ({ default: m.Skills })))
+const LazyMCP = lazy(() => import('./pages/MCP').then(m => ({ default: m.MCP })))
+
+const SuspenseFallback = () => (
+  <div style={{ padding: 24, textAlign: 'center', color: 'var(--text-3)' }}>Loading...</div>
+)
 
 interface PageMeta {
   roman: string
@@ -101,41 +108,41 @@ function AppShell() {
               <div className="page-sub">{meta.sub}</div>
             </div>
             <Routes>
-              <Route path="/" element={<MissionControl />} />
-              <Route path="/mission" element={<MissionControl />} />
-              <Route path="/goals" element={<Goals />} />
-              <Route path="/memory" element={<Memory />} />
-              <Route path="/memory/:noteId" element={<Memory />} />
-              <Route path="/workflows" element={<Workflows />} />
-              <Route path="/workflows/:id" element={<Workflows />} />
-              <Route path="/workflows/new" element={<Workflows />} />
-              <Route path="/graphify" element={<Graphify />} />
-              <Route path="/alerts" element={<Alerts />} />
-              <Route path="/alerts/:id" element={<Alerts />} />
-              <Route path="/analytics" element={<Analytics />} />
-              <Route path="/logs" element={<Logs />} />
-              <Route path="/integrations" element={<Integrations />} />
-              <Route path="/tools" element={<Tools />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/models" element={<Models />} />
-              <Route path="/models/:tab" element={<Models />} />
-              <Route path="/plugins" element={<Plugins />} />
-              <Route path="/plugins/:tab" element={<Plugins />} />
-              <Route path="/skills" element={<Skills />} />
-              <Route path="/skills/:tab" element={<Skills />} />
-              <Route path="/mcp" element={<MCP />} />
-              <Route path="/mcp/:tab" element={<MCP />} />
-              <Route path="/hermes" element={<AgentWorkspaceRoute agentId="hermes" />} />
-              <Route path="/hermes/:tab" element={<AgentWorkspaceRoute agentId="hermes" />} />
-              <Route path="/claude" element={<AgentWorkspaceRoute agentId="claude" />} />
-              <Route path="/claude/:tab" element={<AgentWorkspaceRoute agentId="claude" />} />
-              <Route path="/opencode" element={<AgentWorkspaceRoute agentId="opencode" />} />
-              <Route path="/opencode/:tab" element={<AgentWorkspaceRoute agentId="opencode" />} />
-              <Route path="/openclaw" element={<AgentWorkspaceRoute agentId="openclaw" />} />
-              <Route path="/openclaw/:tab" element={<AgentWorkspaceRoute agentId="openclaw" />} />
-              <Route path="/gemini" element={<AgentWorkspaceRoute agentId="gemini" />} />
-              <Route path="/gemini/:tab" element={<AgentWorkspaceRoute agentId="gemini" />} />
-              <Route path="*" element={<MissionControl />} />
+              <Route path="/" element={<Suspense fallback={<SuspenseFallback />}> <LazyMissionControl /> </Suspense>} />
+              <Route path="/mission" element={<Suspense fallback={<SuspenseFallback />}> <LazyMissionControl /> </Suspense>} />
+              <Route path="/goals" element={<Suspense fallback={<SuspenseFallback />}> <LazyGoals /> </Suspense>} />
+              <Route path="/memory" element={<Suspense fallback={<SuspenseFallback />}> <LazyMemory /> </Suspense>} />
+              <Route path="/memory/:noteId" element={<Suspense fallback={<SuspenseFallback />}> <LazyMemory /> </Suspense>} />
+              <Route path="/workflows" element={<Suspense fallback={<SuspenseFallback />}> <LazyWorkflows /> </Suspense>} />
+              <Route path="/workflows/:id" element={<Suspense fallback={<SuspenseFallback />}> <LazyWorkflows /> </Suspense>} />
+              <Route path="/workflows/new" element={<Suspense fallback={<SuspenseFallback />}> <LazyWorkflows /> </Suspense>} />
+              <Route path="/graphify" element={<Suspense fallback={<SuspenseFallback />}> <LazyGraphify /> </Suspense>} />
+              <Route path="/alerts" element={<Suspense fallback={<SuspenseFallback />}> <LazyAlerts /> </Suspense>} />
+              <Route path="/alerts/:id" element={<Suspense fallback={<SuspenseFallback />}> <LazyAlerts /> </Suspense>} />
+              <Route path="/analytics" element={<Suspense fallback={<SuspenseFallback />}> <LazyAnalytics /> </Suspense>} />
+              <Route path="/logs" element={<Suspense fallback={<SuspenseFallback />}> <LazyLogs /> </Suspense>} />
+              <Route path="/integrations" element={<Suspense fallback={<SuspenseFallback />}> <LazyIntegrations /> </Suspense>} />
+              <Route path="/tools" element={<Suspense fallback={<SuspenseFallback />}> <LazyTools /> </Suspense>} />
+              <Route path="/settings" element={<Suspense fallback={<SuspenseFallback />}> <LazySettings /> </Suspense>} />
+              <Route path="/models" element={<Suspense fallback={<SuspenseFallback />}> <LazyModels /> </Suspense>} />
+              <Route path="/models/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazyModels /> </Suspense>} />
+              <Route path="/plugins" element={<Suspense fallback={<SuspenseFallback />}> <LazyPlugins /> </Suspense>} />
+              <Route path="/plugins/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazyPlugins /> </Suspense>} />
+              <Route path="/skills" element={<Suspense fallback={<SuspenseFallback />}> <LazySkills /> </Suspense>} />
+              <Route path="/skills/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazySkills /> </Suspense>} />
+              <Route path="/mcp" element={<Suspense fallback={<SuspenseFallback />}> <LazyMCP /> </Suspense>} />
+              <Route path="/mcp/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazyMCP /> </Suspense>} />
+              <Route path="/hermes" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="hermes" /> </Suspense>} />
+              <Route path="/hermes/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="hermes" /> </Suspense>} />
+              <Route path="/claude" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="claude" /> </Suspense>} />
+              <Route path="/claude/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="claude" /> </Suspense>} />
+              <Route path="/opencode" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="opencode" /> </Suspense>} />
+              <Route path="/opencode/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="opencode" /> </Suspense>} />
+              <Route path="/openclaw" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="openclaw" /> </Suspense>} />
+              <Route path="/openclaw/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="openclaw" /> </Suspense>} />
+              <Route path="/gemini" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="gemini" /> </Suspense>} />
+              <Route path="/gemini/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="gemini" /> </Suspense>} />
+              <Route path="*" element={<Suspense fallback={<SuspenseFallback />}> <LazyMissionControl /> </Suspense>} />
             </Routes>
           </div>
         </div>

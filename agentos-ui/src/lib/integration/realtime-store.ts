@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { subscribeToEvent, PlatformEvents } from './event-bus'
+import { subscribeToEvent, PlatformEvents, unsubscribeAllEvents } from './event-bus'
+import { useShallow } from 'zustand/react/shallow'
 
 export interface RealtimeConnectionState {
   status: 'connecting' | 'connected' | 'disconnected' | 'error' | 'reconnecting'
@@ -313,6 +314,8 @@ export const useRealtimeStore = create<RealtimeState>((set, get) => ({
   },
   
   shutdown: () => {
+    // Unsubscribe all event subscriptions to prevent memory leaks
+    unsubscribeAllEvents()
     set({
       connection: DEFAULT_CONNECTION,
       presence: DEFAULT_PRESENCE,
@@ -349,7 +352,9 @@ export function useLatency() {
 }
 
 export function usePresenceUsers() {
-  return useRealtimeStore((state) => Array.from(state.presence.users.values()))
+  return useRealtimeStore(
+    useShallow((state) => Array.from(state.presence.users.values()))
+  )
 }
 
 export function useLocalUser() {
@@ -369,5 +374,7 @@ export function useUnreadNotifications() {
 }
 
 export function useRecentActivity() {
-  return useRealtimeStore((state) => state.activity.recentEvents)
+  return useRealtimeStore(
+    useShallow((state) => state.activity.recentEvents)
+  )
 }

@@ -26,11 +26,13 @@ interface EventBusState {
   subscribe: <T>(eventType: string, callback: (payload: T) => void) => () => void
   subscribeOnce: <T>(eventType: string, callback: (payload: T) => void) => () => void
   unsubscribe: (eventType: string, callback: EventCallback) => void
+  unsubscribeAll: (eventType?: string) => void
   clear: () => void
   getEventLog: (eventType?: string, since?: number) => BatchedEvent[]
   replayEvents: (eventType: string, callback: (payload: unknown) => void, since?: number) => void
   setBatchInterval: (interval: number) => void
   flushBatch: () => void
+  getSubscriptionCount: (eventType?: string) => number
 }
 
 let subscriptionIdCounter = 0
@@ -162,38 +164,59 @@ export const useEventBus = create<EventBusState>((set, get) => ({
   },
   
   unsubscribe: (eventType: string, callback: EventCallback) => {
-    set((state) => {
-      const newSubs = new Map(state.subscriptions)
-      const existing = newSubs.get(eventType)
-      if (existing) {
-        const filtered = existing.filter((s) => s.callback !== callback)
-        if (filtered.length === 0) {
-          newSubs.delete(eventType)
-        } else {
-          newSubs.set(eventType, filtered)
+      set((state) => {
+        const newSubs = new Map(state.subscriptions)
+        const existing = newSubs.get(eventType)
+        if (existing) {
+          const filtered = existing.filter((s) => s.callback !== callback)
+          if (filtered.length === 0) {
+            newSubs.delete(eventType)
+          } else {
+            newSubs.set(eventType, filtered)
+          }
         }
-      }
-      return { subscriptions: newSubs }
-    })
-  },
-  
-  clear: () => {
-    set({ subscriptions: new Map(), eventLog: [], batchQueue: [], throttledEvents: new Map() })
-  },
+        return { subscriptions: newSubs }
+      })
+    },
+
+    unsubscribeAll: (eventType?: string) => {
+      set((state) => {
+        if (eventType) {
+          const newSubs = new Map(state.subscriptions)
+          newSubs.delete(eventType)
+          return { subscriptions: newSubs }
+        }
+        return { subscriptions: new Map() }
+      })
+    },
+
+    clear: () => {
+      set({ subscriptions: new Map(), eventLog: [], batchQueue: [], throttledEvents: new Map() })
+    },
   
   getEventLog: (eventType?: string, since?: number) => {
-    const { eventLog } = get()
-    let filtered = eventLog
-    if (eventType) {
-      filtered = filtered.filter((e) => e.eventType === eventType)
-    }
-    if (since) {
-      filtered = filtered.filter((e) => e.timestamp >= since)
-    }
-    return filtered
-  },
-  
-  replayEvents: (eventType: string, callback: (payload: unknown) => void, since?: number) => {
+      const { eventLog } = get()
+      let filtered = eventLog
+      if (eventType) {
+        filtered = filtered.filter((e) => e.eventType === eventType)
+      }
+      if (since) {
+        filtered = filtered.filter((e) => e.timestamp >= since)
+      }
+      return filtered
+    },
+
+    getSubscriptionCount: (eventType?: string) => {
+      const { subscriptions } = get()
+      if (eventType) {
+        return subscriptions.get(eventType)?.length ?? 0
+      }
+      let count = 0
+      subscriptions.forEach((subs) => { count += subs.length })
+      return count
+    },
+
+    replayEvents: (eventType: string, callback: (payload: unknown) => void, since?: number) => {
     const events = get().getEventLog(eventType, since)
     events.forEach((event) => {
       try {
@@ -229,12 +252,20 @@ export function unsubscribeFromEvent(eventType: string, callback: EventCallback)
   useEventBus.getState().unsubscribe(eventType, callback)
 }
 
+export function unsubscribeAllEvents(eventType?: string) {
+  useEventBus.getState().unsubscribeAll(eventType)
+}
+
 export function clearEventBus() {
   useEventBus.getState().clear()
 }
 
 export function getEventLog(eventType?: string, since?: number) {
   return useEventBus.getState().getEventLog(eventType, since)
+}
+
+export function getSubscriptionCount(eventType?: string) {
+  return useEventBus.getState().getSubscriptionCount(eventType)
 }
 
 export function replayEvents(eventType: string, callback: (payload: unknown) => void, since?: number) {

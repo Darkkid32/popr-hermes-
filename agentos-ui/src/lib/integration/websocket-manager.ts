@@ -148,7 +148,18 @@ export const useWebSocketManager = create<WebSocketManagerState>((set, get) => (
       const socket = new WebSocket(wsUrl)
       set({ socket })
       
+      // Connection timeout
+      const connectionTimeout = setTimeout(() => {
+        const currentSocket = get().socket
+        if (currentSocket && currentSocket.readyState === WebSocket.CONNECTING) {
+          currentSocket.close()
+          set({ connectionState: 'error', lastError: 'Connection timeout' })
+          emitEvent(PlatformEvents.WS_ERROR, { error: 'Connection timeout', timestamp: Date.now() })
+        }
+      }, 10000)
+      
       socket.addEventListener('open', () => {
+        clearTimeout(connectionTimeout)
         set({ reconnectAttempts: 0, lastConnected: Date.now(), lastError: null, connectionState: 'open' })
         
         // Start heartbeat

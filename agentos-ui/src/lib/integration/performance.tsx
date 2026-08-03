@@ -17,6 +17,71 @@ export function createLazyComponent<T extends ComponentType<any>>(
   }
 }
 
+// Workspace lazy loaders - code splitting per workspace
+export const LazyMissionControl = createLazyComponent(
+  () => import('../../pages/MissionControl').then(m => ({ default: m.MissionControl }))
+)
+
+export const LazyAgentWorkspace = createLazyComponent(
+  () => import('../../pages/AgentWorkspace').then(m => ({ default: m.AgentWorkspaceRoute }))
+)
+
+export const LazyGoals = createLazyComponent(
+  () => import('../../pages/Goals').then(m => ({ default: m.Goals }))
+)
+
+export const LazyMemory = createLazyComponent(
+  () => import('../../pages/Memory').then(m => ({ default: m.Memory }))
+)
+
+export const LazyWorkflows = createLazyComponent(
+  () => import('../../pages/Workflows').then(m => ({ default: m.Workflows }))
+)
+
+export const LazyGraphify = createLazyComponent(
+  () => import('../../pages/Graphify').then(m => ({ default: m.Graphify }))
+)
+
+export const LazyAlerts = createLazyComponent(
+  () => import('../../pages/Alerts').then(m => ({ default: m.Alerts }))
+)
+
+export const LazyAnalytics = createLazyComponent(
+  () => import('../../pages/Analytics').then(m => ({ default: m.Analytics }))
+)
+
+export const LazyLogs = createLazyComponent(
+  () => import('../../pages/Logs').then(m => ({ default: m.Logs }))
+)
+
+export const LazyIntegrations = createLazyComponent(
+  () => import('../../pages/Integrations').then(m => ({ default: m.Integrations }))
+)
+
+export const LazyTools = createLazyComponent(
+  () => import('../../pages/Tools').then(m => ({ default: m.Tools }))
+)
+
+export const LazySettings = createLazyComponent(
+  () => import('../../pages/Settings').then(m => ({ default: m.SettingsPage }))
+)
+
+export const LazyModels = createLazyComponent(
+  () => import('../../pages/Models').then(m => ({ default: m.Models }))
+)
+
+export const LazyPlugins = createLazyComponent(
+  () => import('../../pages/Plugins').then(m => ({ default: m.Plugins }))
+)
+
+export const LazySkills = createLazyComponent(
+  () => import('../../pages/Skills').then(m => ({ default: m.Skills }))
+)
+
+export const LazyMCP = createLazyComponent(
+  () => import('../../pages/MCP').then(m => ({ default: m.MCP }))
+)
+
 // Performance monitoring
 export function measureComponentRender<P extends object>(
   Component: ComponentType<P>,
@@ -132,5 +197,52 @@ export function observePerformance(name: string) {
     }
 
     return descriptor
+  }
+}
+
+// React.memo comparison utilities
+export function shallowEqual<T extends object>(a: T, b: T): boolean {
+  if (a === b) return true
+  if (!a || !b) return false
+  
+  const keysA = Object.keys(a) as (keyof T)[]
+  const keysB = Object.keys(b) as (keyof T)[]
+  
+  if (keysA.length !== keysB.length) return false
+  
+  for (const key of keysA) {
+    if (!keysB.includes(key)) return false
+    if (a[key] !== b[key]) return false
+  }
+  
+  return true
+}
+
+// createSelector for Zustand (reselect-like)
+export function createSelector<TState, TResult>(
+  selectors: ((state: TState) => any)[],
+  combiner: (...values: any[]) => TResult
+) {
+  let lastState: TState | null = null
+  let lastResult: TResult | null = null
+  let lastArgs: any[] = []
+  
+  return (state: TState): TResult => {
+    const args = selectors.map(s => s(state))
+    
+    if (lastState === state) {
+      return lastResult!
+    }
+    
+    const changed = args.some((arg, i) => arg !== lastArgs[i])
+    
+    if (!changed) {
+      return lastResult!
+    }
+    
+    lastState = state
+    lastArgs = args
+    lastResult = combiner(...args)
+    return lastResult
   }
 }
