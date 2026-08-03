@@ -1,0 +1,46 @@
+.connection-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+
+.ci-sm { gap: 4px; font-size: 11px; }
+.ci-lg { gap: 8px; font-size: 13px; }
+
+.ci-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.ci-sm .ci-dot { width: 6px; height: 6px; }
+.ci-lg .ci-dot { width: 10px; height: 10px; }
+
+.ci-label { white-space: nowrap; }
+
+.ci-latency {
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  padding: 0 4px;
+  background: var(--bg-2);
+  border-radius: 4px;
+}
+
+.ci-quality {
+  font-size: 11px;
+  text-transform: capitalize;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.connection-indicator:has(.ci-dot[style*="var(--success)"]) .ci-dot {
+  animation: none;
+}

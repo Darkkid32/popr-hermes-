@@ -1,0 +1,68 @@
+.presence-avatars {
+  display: inline-flex;
+  align-items: center;
+}
+
+.pa-stack {
+  display: flex;
+}
+
+.pa-avatar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid;
+  background: var(--bg-2);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s var(--easing-standard), box-shadow 0.15s var(--easing-standard);
+  margin-left: calc(var(--space-2) * -1);
+}
+
+.pa-avatar:first-child {
+  margin-left: 0;
+}
+
+.pa-avatar:hover {
+  transform: scale(1.1);
+  box-shadow: var(--elevation-2);
+  z-index: 100 !important;
+}
+
+.pa-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  color: white;
+}
+
+.pa-status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-radius: 50%;
+  border: 2px solid;
+}
+
+.pa-more {
+  background: var(--bg-3);
+  color: var(--text-2);
+  border-color: var(--border);
+}
+
+.pa-more:hover {
+  background: var(--bg-2);
+}
+
+.pa-more-text {
+  font-size: 0.7em;
+}
+
+.pa-sm .pa-avatar { margin-left: calc(var(--space-1) * -1); }
+.pa-lg .pa-avatar { margin-left: calc(var(--space-3) * -1); }

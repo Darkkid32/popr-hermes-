@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { Sidebar } from './components/Sidebar'
 import { NewAgentModal } from './components/NewAgentModal'
 import { ToastStack } from './components/ToastStack'
+import { ReconnectBanner } from './components/realtime/ReconnectBanner'
+import { ConnectionIndicator } from './components/realtime/ConnectionIndicator'
 import { MissionControl } from './pages/MissionControl'
 import { AgentWorkspaceRoute } from './pages/AgentWorkspace'
 import { Goals } from './pages/Goals'
@@ -67,6 +69,7 @@ function AppShell() {
 
   return (
     <div className="app">
+      <ReconnectBanner />
       <a href="#main" className="skip-link">Skip to main content</a>
       <Sidebar />
       <div className="main">
@@ -79,6 +82,7 @@ function AppShell() {
             <span className="page-name">{pageName}</span>
           </div>
           <div className="row">
+            <ConnectionIndicator showLatency showQuality size="sm" />
             <button className="sys-pill" aria-label="System status">
               <span className="rainbow-dot" />
               <span>All Systems</span>

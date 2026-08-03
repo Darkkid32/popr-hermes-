@@ -1,6 +1,8 @@
 import { NavLink as RouterLink, useLocation } from 'react-router-dom'
 import { NAV_LINKS } from '../lib/demo-data'
 import { useUIStore } from '../stores/UIStore'
+import { ConnectionIndicator } from './realtime/ConnectionIndicator'
+import { PresenceAvatars } from './realtime/PresenceAvatars'
 
 const STATUS_COLOR: Record<string, string> = {
   green: '#22d97a',
@@ -88,6 +90,10 @@ export function Sidebar() {
         <div>
           <div className="sb-uname">Alex Operator</div>
           <div className="sb-urole">System conductor</div>
+        </div>
+        <div className="sb-presence">
+          <PresenceAvatars maxVisible={4} size="sm" />
+          <ConnectionIndicator size="sm" showLatency />
         </div>
       </div>
     </nav>

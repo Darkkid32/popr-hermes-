@@ -1,0 +1,49 @@
+.sync-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.sync-status-indicator.sm { font-size: 11px; gap: 4px; }
+.sync-status-indicator.lg { font-size: 13px; gap: 8px; }
+
+.ssi-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sync-status-indicator.syncing .ssi-icon {
+  animation: spin 1s linear infinite;
+}
+
+.ssi-label { white-space: nowrap; }
+
+.ssi-counts {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.ssi-pending, .ssi-failed, .ssi-conflicts {
+  padding: 1px 6px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.ssi-pending { background: var(--brand-muted); color: var(--brand); }
+.ssi-failed { background: var(--error); color: white; }
+.ssi-conflicts { background: var(--warning); color: var(--bg-0); }
+
+.ssi-last-sync {
+  font-size: 10px;
+  color: var(--text-3);
+  font-family: var(--font-family-mono);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

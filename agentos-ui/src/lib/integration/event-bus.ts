@@ -8,60 +8,151 @@ interface EventSubscription {
   callback: EventCallback
 }
 
+interface BatchedEvent {
+  eventType: string
+  payload: unknown
+  timestamp: number
+}
+
 interface EventBusState {
   subscriptions: Map<string, EventSubscription[]>
-  emit: <T>(eventType: string, payload: T) => void
+  eventLog: BatchedEvent[]
+  maxLogSize: number
+  batchTimer: ReturnType<typeof setTimeout> | null
+  batchQueue: BatchedEvent[]
+  batchInterval: number
+  throttledEvents: Map<string, number>
+  emit: <T>(eventType: string, payload: T, options?: { throttle?: number; persist?: boolean }) => void
   subscribe: <T>(eventType: string, callback: (payload: T) => void) => () => void
   subscribeOnce: <T>(eventType: string, callback: (payload: T) => void) => () => void
   unsubscribe: (eventType: string, callback: EventCallback) => void
   clear: () => void
+  getEventLog: (eventType?: string, since?: number) => BatchedEvent[]
+  replayEvents: (eventType: string, callback: (payload: unknown) => void, since?: number) => void
+  setBatchInterval: (interval: number) => void
+  flushBatch: () => void
 }
 
 let subscriptionIdCounter = 0
 
+const DEFAULT_BATCH_INTERVAL = 50
+
 export const useEventBus = create<EventBusState>((set, get) => ({
   subscriptions: new Map(),
-
-  emit: <T>(eventType: string, payload: T) => {
-    const subs = get().subscriptions.get(eventType)
-    if (subs) {
-      subs.forEach((sub) => {
-        try {
-          sub.callback(payload)
-        } catch (error) {
-          console.error(`Error in event bus subscriber for ${eventType}:`, error)
-        }
+  eventLog: [],
+  maxLogSize: 1000,
+  batchTimer: null,
+  batchQueue: [],
+  batchInterval: DEFAULT_BATCH_INTERVAL,
+  throttledEvents: new Map(),
+  
+  emit: <T>(eventType: string, payload: T, options?: { throttle?: number; persist?: boolean }) => {
+    const { throttle = 0, persist = true } = options || {}
+    const now = Date.now()
+    
+    // Throttling check
+    if (throttle > 0) {
+      const lastEmit = get().throttledEvents.get(eventType) || 0
+      if (now - lastEmit < throttle) {
+        return // Skip this emission
+      }
+      set((state) => {
+        const newThrottled = new Map(state.throttledEvents)
+        newThrottled.set(eventType, now)
+        return { throttledEvents: newThrottled }
       })
     }
-    // Also emit to wildcard listeners
-    const wildcardSubs = get().subscriptions.get('*')
-    if (wildcardSubs) {
-      wildcardSubs.forEach((sub) => {
-        try {
-          sub.callback({ type: eventType, payload })
-        } catch (error) {
-          console.error('Error in wildcard event bus subscriber:', error)
+    
+    const batchedEvent: BatchedEvent = { eventType, payload, timestamp: now }
+    
+    // Add to batch queue
+    set((state) => ({ batchQueue: [...state.batchQueue, batchedEvent] }))
+    
+    // Persist to event log
+    if (persist) {
+      set((state) => {
+        const newLog = [...state.eventLog, batchedEvent]
+        if (newLog.length > state.maxLogSize) {
+          newLog.splice(0, newLog.length - state.maxLogSize)
         }
+        return { eventLog: newLog }
       })
+    }
+    
+    // Schedule batch flush
+    const { batchTimer, batchInterval } = get()
+    if (!batchTimer) {
+      const timer = setTimeout(() => get().flushBatch(), batchInterval)
+      set({ batchTimer: timer })
     }
   },
-
+  
+  flushBatch: () => {
+    const { batchQueue, subscriptions } = get()
+    if (batchQueue.length === 0) {
+      set({ batchTimer: null })
+      return
+    }
+    
+    // Group by event type
+    const grouped = new Map<string, BatchedEvent[]>()
+    batchQueue.forEach((event) => {
+      const existing = grouped.get(event.eventType) || []
+      existing.push(event)
+      grouped.set(event.eventType, existing)
+    })
+    
+    // Emit each group
+    grouped.forEach((events, eventType) => {
+      const subs = subscriptions.get(eventType)
+      if (subs) {
+        // For batched events, emit the last one or all depending on subscriber preference
+        subs.forEach((sub) => {
+          try {
+            // Emit the latest event in the batch
+            const latestEvent = events[events.length - 1]
+            sub.callback(latestEvent.payload)
+          } catch (error) {
+            console.error(`Error in event bus subscriber for ${eventType}:`, error)
+          }
+        })
+      }
+      
+      // Also emit to wildcard listeners
+      const wildcardSubs = subscriptions.get('*')
+      if (wildcardSubs) {
+        wildcardSubs.forEach((sub) => {
+          try {
+            // Emit all events in batch for wildcard
+            events.forEach((event) => {
+              sub.callback({ type: event.eventType, payload: event.payload, timestamp: event.timestamp })
+            })
+          } catch (error) {
+            console.error('Error in wildcard event bus subscriber:', error)
+          }
+        })
+      }
+    })
+    
+    set({ batchQueue: [], batchTimer: null })
+  },
+  
   subscribe: <T>(eventType: string, callback: (payload: T) => void) => {
     const id = `sub-${++subscriptionIdCounter}`
     const subscription: EventSubscription = { id, eventType, callback: callback as EventCallback }
-
+    
     set((state) => {
       const newSubs = new Map(state.subscriptions)
       const existing = newSubs.get(eventType) || []
       newSubs.set(eventType, [...existing, subscription])
       return { subscriptions: newSubs }
     })
-
+    
     return () => {
       get().unsubscribe(eventType, callback as EventCallback)
     }
   },
-
+  
   subscribeOnce: <T>(eventType: string, callback: (payload: T) => void) => {
     const unsubscribe = get().subscribe<T>(eventType, (payload) => {
       callback(payload)
@@ -69,7 +160,7 @@ export const useEventBus = create<EventBusState>((set, get) => ({
     })
     return unsubscribe
   },
-
+  
   unsubscribe: (eventType: string, callback: EventCallback) => {
     set((state) => {
       const newSubs = new Map(state.subscriptions)
@@ -85,9 +176,36 @@ export const useEventBus = create<EventBusState>((set, get) => ({
       return { subscriptions: newSubs }
     })
   },
-
+  
   clear: () => {
-    set({ subscriptions: new Map() })
+    set({ subscriptions: new Map(), eventLog: [], batchQueue: [], throttledEvents: new Map() })
+  },
+  
+  getEventLog: (eventType?: string, since?: number) => {
+    const { eventLog } = get()
+    let filtered = eventLog
+    if (eventType) {
+      filtered = filtered.filter((e) => e.eventType === eventType)
+    }
+    if (since) {
+      filtered = filtered.filter((e) => e.timestamp >= since)
+    }
+    return filtered
+  },
+  
+  replayEvents: (eventType: string, callback: (payload: unknown) => void, since?: number) => {
+    const events = get().getEventLog(eventType, since)
+    events.forEach((event) => {
+      try {
+        callback(event.payload)
+      } catch (error) {
+        console.error(`Error replaying event ${eventType}:`, error)
+      }
+    })
+  },
+  
+  setBatchInterval: (interval: number) => {
+    set({ batchInterval: interval })
   },
 }))
 
@@ -95,8 +213,8 @@ export function useEventBusState() {
   return useEventBus()
 }
 
-export function emitEvent<T>(eventType: string, payload: T) {
-  useEventBus.getState().emit(eventType, payload)
+export function emitEvent<T>(eventType: string, payload: T, options?: { throttle?: number; persist?: boolean }) {
+  useEventBus.getState().emit(eventType, payload, options)
 }
 
 export function subscribeToEvent<T>(eventType: string, callback: (payload: T) => void) {
@@ -113,6 +231,14 @@ export function unsubscribeFromEvent(eventType: string, callback: EventCallback)
 
 export function clearEventBus() {
   useEventBus.getState().clear()
+}
+
+export function getEventLog(eventType?: string, since?: number) {
+  return useEventBus.getState().getEventLog(eventType, since)
+}
+
+export function replayEvents(eventType: string, callback: (payload: unknown) => void, since?: number) {
+  useEventBus.getState().replayEvents(eventType, callback, since)
 }
 
 // Common event types for the platform
@@ -186,6 +312,16 @@ export const PlatformEvents = {
   WORKFLOW_FAILED: 'workflow:failed',
   WORKFLOW_STEP_STARTED: 'workflow:step:started',
   WORKFLOW_STEP_COMPLETED: 'workflow:step:completed',
+
+  // Real-time specific events
+  PRESENCE_JOIN: 'presence:join',
+  PRESENCE_LEAVE: 'presence:leave',
+  PRESENCE_UPDATE: 'presence:update',
+  PRESENCE_CURSOR: 'presence:cursor',
+  SYNC_CONFLICT: 'sync:conflict',
+  SYNC_SUCCESS: 'sync:success',
+  SYNC_ERROR: 'sync:error',
+  ACTIVITY_EVENT: 'activity:event',
 } as const
 
 export type PlatformEventType = typeof PlatformEvents[keyof typeof PlatformEvents]
