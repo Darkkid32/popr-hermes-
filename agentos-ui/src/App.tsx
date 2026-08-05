@@ -25,6 +25,7 @@ const LazySkills = lazy(() => import('./pages/Skills').then(m => ({ default: m.S
 const LazyMCP = lazy(() => import('./pages/MCP').then(m => ({ default: m.MCP })))
 const LazyOrganization = lazy(() => import('./pages/Organization').then(m => ({ default: m.Organization })))
 const LazySecurity = lazy(() => import('./pages/Security').then(m => ({ default: m.Security })))
+const LazyObservability = lazy(() => import('./pages/Observability').then(m => ({ default: m.Observability })))
 
 const SuspenseFallback = () => (
   <div style={{ padding: 24, textAlign: 'center', color: 'var(--text-3)' }}>Loading...</div>
@@ -61,6 +62,7 @@ const PAGE_META: Record<string, PageMeta> = {
   '/mcp': { roman: 'XX', eyebrow: 'MCP', title: 'MCP Workspace', sub: 'Model Context Protocol servers, tools, resources, and marketplace.', kind: 'self' },
   '/organization': { roman: 'XXI', eyebrow: 'Self · Organization', title: 'Organization', sub: 'Manage organization structure, teams, RBAC, workspaces, projects, and compliance.', kind: 'self' },
   '/security': { roman: 'XXII', eyebrow: 'Self · Security', title: 'Security', sub: 'Threat detection, vulnerability management, compliance, audit logs, and access control.', kind: 'self' },
+  '/observability': { roman: 'XXIII', eyebrow: 'Self · Observability', title: 'Observability', sub: 'Metrics, logs, traces, dashboards, alerts, and service topology.', kind: 'self' },
 }
 
 function matchMeta(pathname: string): PageMeta {
@@ -140,6 +142,8 @@ function AppShell() {
               <Route path="/organization/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazyOrganization /> </Suspense>} />
               <Route path="/security" element={<Suspense fallback={<SuspenseFallback />}> <LazySecurity /> </Suspense>} />
               <Route path="/security/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazySecurity /> </Suspense>} />
+              <Route path="/observability" element={<Suspense fallback={<SuspenseFallback />}> <LazyObservability /> </Suspense>} />
+              <Route path="/observability/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazyObservability /> </Suspense>} />
               <Route path="/hermes" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="hermes" /> </Suspense>} />
               <Route path="/hermes/:tab" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="hermes" /> </Suspense>} />
               <Route path="/claude" element={<Suspense fallback={<SuspenseFallback />}> <LazyAgentWorkspace agentId="claude" /> </Suspense>} />
