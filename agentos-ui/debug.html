@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hermes Debug</title>
+    <style>
+        body { background: #0a0d1a; color: white; font-family: monospace; padding: 20px; }
+        .error { color: #ff4d6d; }
+        .ok { color: #22d97a; }
+    </style>
+</head>
+<body>
+    <h1 class="ok">Hermes Debug Page</h1>
+    <p>If you see this, the server is working.</p>
+    <script>
+        try {
+            document.write('<p class="ok">JavaScript is running!</p>');
+        } catch(e) {
+            document.write('<p class="error">JavaScript error: ' + e.message + '</p>');
+        }
+    </script>
+</body>
+</html>

@@ -97,7 +97,7 @@ function AppShell() {
           </div>
         </header>
         <div className="content">
-          <div key={location.pathname} className={'page active'} id="main">
+                  <div className={'page active'} id="main">
             <div className="page-header">
               <div className="page-eyebrow">
                 <span className="roman">{meta.roman}.</span>

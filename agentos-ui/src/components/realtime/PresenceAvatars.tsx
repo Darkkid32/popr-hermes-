@@ -1,4 +1,5 @@
 import { useRealtimeStore } from '../../lib/integration/realtime-store'
+import { useShallow } from 'zustand/react/shallow'
 import './PresenceAvatars.css'
 
 interface PresenceAvatarsProps {
@@ -16,7 +17,7 @@ export function PresenceAvatars({
   size = 'md',
   onUserClick,
 }: PresenceAvatarsProps) {
-  const users = useRealtimeStore((state) => Array.from(state.presence.users.values()))
+  const users = useRealtimeStore(useShallow((state) => Array.from(state.presence.users.values())))
   const localUser = useRealtimeStore((state) => state.presence.localUser)
   
   // Combine local user with remote users

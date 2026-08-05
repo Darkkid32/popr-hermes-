@@ -8,5 +8,13 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:8765'
     }
+  },
+  build: {
+    modulePreload: false
+  },
+  preview: {
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    }
   }
 })

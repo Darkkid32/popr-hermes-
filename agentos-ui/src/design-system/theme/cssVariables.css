@@ -1,0 +1,456 @@
+/* ============================================
+ * HERMES AI OS - DESIGN TOKENS
+ * Generated from Google Stitch Project 10866743485103090405
+ * ============================================ */
+
+:root {
+  /* --- Colors --- */
+  --color-background-base: #020617;
+  --color-background-workspace: #0d1322;
+  --color-background-elevated: #0B1120;
+  --color-background-overlay: rgba(2, 6, 23, 0.9);
+
+  --color-surface-level0: #020617;
+  --color-surface-level1: #0B1120;
+  --color-surface-level2: #0B1120;
+  --color-surface-container: #191f2f;
+  --color-surface-container-low: #151b2b;
+  --color-surface-container-high: #242a3a;
+  --color-surface-container-highest: #2f3445;
+  --color-surface-bright: #33394a;
+  --color-surface-dim: #0d1322;
+
+  --color-border-primary: #1E293B;
+  --color-border-secondary: #3c4a46;
+  --color-border-focus: #2DD4BF;
+  --color-border-error: #FFB4AB;
+
+  --color-primary-base: #2DD4BF;
+  --color-primary-container: #2DD4BF;
+  --color-primary-on-primary: #003731;
+  --color-primary-on-container: #00574D;
+  --color-primary-fixed: #62FAE3;
+  --color-primary-fixed-dim: #3CDDC7;
+  --color-primary-on-fixed: #00201C;
+  --color-primary-on-fixed-variant: #005047;
+  --color-primary-glow: rgba(45, 212, 191, 0.15);
+  --color-primary-glow-strong: rgba(45, 212, 191, 0.3);
+
+  --color-secondary-base: #D946EF;
+  --color-secondary-container: #AE05C6;
+  --color-secondary-on-secondary: #580065;
+  --color-secondary-on-container: #FFD8FD;
+  --color-secondary-fixed: #FFD6FD;
+  --color-secondary-fixed-dim: #FBABFF;
+  --color-secondary-on-fixed: #36003E;
+  --color-secondary-on-fixed-variant: #7C008E;
+
+  --color-tertiary-base: #10B981;
+  --color-tertiary-container: #44D69B;
+  --color-tertiary-on-tertiary: #003824;
+  --color-tertiary-on-container: #00593B;
+  --color-tertiary-fixed: #6FFBBE;
+  --color-tertiary-fixed-dim: #4EDEA3;
+  --color-tertiary-on-fixed: #002113;
+  --color-tertiary-on-fixed-variant: #005236;
+
+  --color-error-base: #FFB4AB;
+  --color-error-container: #93000A;
+  --color-error-on-error: #690005;
+  --color-error-on-container: #FFDAD6;
+
+  --color-success-base: #10B981;
+  --color-success-container: #064E3B;
+  --color-success-on-success: #D1FAE5;
+  --color-success-on-container: #064E3B;
+
+  --color-warning-base: #F59E0B;
+  --color-warning-container: #78350F;
+  --color-warning-on-warning: #FEF3C7;
+  --color-warning-on-container: #78350F.
+
+  --color-info-base: #0EA5E9;
+  --color-info-container: #0C4A6E.
+  --color-info-on-info: #E0F2FE.
+  --color-info-on-container: #0C4A6E.
+
+  --color-text-primary: #DDE2F8.
+  --color-text-secondary: #BACAC5.
+  --color-text-tertiary: #859490.
+  --color-text-disabled: #585858.
+  --color-text-inverse: #2A3040.
+  --color-text-link: #57F1DB.
+  --color-text-link-hover: #62FAE3.
+
+  --color-code-primary: #66F3B6.
+  --color-code-secondary: #FBABFF.
+  --color-code-keyword: #D946EF.
+  --color-code-string: #2DD4BF.
+  --color-code-number: #F59E0B.
+  --color-code-comment: #585858.
+
+  /* --- Typography --- */
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', Consolas, monospace;
+  --font-ui: 'Inter', system-ui, sans-serif;
+
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  --text-display-lg: 48px;
+  --text-display-lg-line-height: 56px;
+  --text-display-lg-letter-spacing: -0.02em;
+  --text-display-lg-weight: 700;
+
+  --text-display-md: 36px;
+  --text-display-md-line-height: 44px;
+  --text-display-md-letter-spacing: -0.015em;
+  --text-display-md-weight: 700;
+
+  --text-display-sm: 28px;
+  --text-display-sm-line-height: 36px;
+  --text-display-sm-letter-spacing: -0.01em;
+  --text-display-sm-weight: 600.
+
+  --text-headline-lg: 32px.
+  --text-headline-lg-line-height: 40px.
+  --text-headline-lg-letter-spacing: -0.01em.
+  --text-headline-lg-weight: 600.
+
+  --text-headline-md: 24px.
+  --text-headline-md-line-height: 32px.
+  --text-headline-md-letter-spacing: -0.005em.
+  --text-headline-md-weight: 600.
+
+  --text-headline-sm: 20px.
+  --text-headline-sm-line-height: 28px.
+  --text-headline-sm-letter-spacing: 0.
+  --text-headline-sm-weight: 600.
+
+  --text-title-lg: 18px.
+  --text-title-lg-line-height: 24px.
+  --text-title-lg-letter-spacing: 0.
+  --text-title-lg-weight: 600.
+
+  --text-title-md: 16px.
+  --text-title-md-line-height: 24px.
+  --text-title-md-letter-spacing: 0.
+  --text-title-md-weight: 600.
+
+  --text-title-sm: 14px.
+  --text-title-sm-line-height: 20px.
+  --text-title-sm-letter-spacing: 0.
+  --text-title-sm-weight: 600.
+
+  --text-body-lg: 18px.
+  --text-body-lg-line-height: 28px.
+  --text-body-lg-letter-spacing: 0.
+  --text-body-lg-weight: 400.
+
+  --text-body-md: 16px.
+  --text-body-md-line-height: 24px.
+  --text-body-md-letter-spacing: 0.
+  --text-body-md-weight: 400.
+
+  --text-body-sm: 14px.
+  --text-body-sm-line-height: 20px.
+  --text-body-sm-letter-spacing: 0.
+  --text-body-sm-weight: 400.
+
+  --text-body-xs: 12px.
+  --text-body-xs-line-height: 16px.
+  --text-body-xs-letter-spacing: 0.
+  --text-body-xs-weight: 400.
+
+  --text-label-lg: 14px.
+  --text-label-lg-line-height: 20px.
+  --text-label-lg-letter-spacing: 0.
+  --text-label-lg-weight: 500.
+
+  --text-label-md: 12px.
+  --text-label-md-line-height: 16px.
+  --text-label-md-letter-spacing: 0.02em.
+  --text-label-md-weight: 500.
+
+  --text-label-sm: 11px.
+  --text-label-sm-line-height: 16px.
+  --text-label-sm-letter-spacing: 0.03em.
+  --text-label-sm-weight: 500.
+
+  --text-label-caps: 12px.
+  --text-label-caps-line-height: 16px.
+  --text-label-caps-letter-spacing: 0.05em.
+  --text-label-caps-weight: 600.
+  --text-label-caps-text-transform: uppercase.
+
+  --text-code-md: 14px.
+  --text-code-md-line-height: 20px.
+  --text-code-md-letter-spacing: 0.
+  --text-code-md-weight: 400.
+
+  --text-code-sm: 12px.
+  --text-code-sm-line-height: 18px.
+  --text-code-sm-letter-spacing: 0.
+  --text-code-sm-weight: 400.
+
+  /* --- Spacing --- */
+  --space-unit: 4px.
+  --space-0: 0px.
+  --space-1: 4px.
+  --space-2: 8px.
+  --space-3: 12px.
+  --space-4: 16px.
+  --space-5: 20px.
+  --space-6: 24px.
+  --space-7: 28px.
+  --space-8: 32px.
+  --space-10: 40px.
+  --space-12: 48px.
+  --space-14: 56px.
+  --space-16: 64px.
+  --space-20: 80px.
+  --space-24: 96px.
+  --space-32: 128px.
+
+  --space-xs: 4px.
+  --space-sm: 8px.
+  --space-md: 16px.
+  --space-lg: 24px.
+  --space-xl: 32px.
+  --space-2xl: 48px.
+  --space-3xl: 64px.
+  --space-gutter: 24px.
+  --space-margin: 32px.
+  --space-container: 32px.
+  --space-section: 48px.
+
+  --layout-sidebar: 280px.
+  --layout-sidebar-collapsed: 72px.
+  --layout-topbar: 44px.
+  --layout-right-panel: 320px.
+  --layout-modal: 560px.
+  --layout-drawer: 400px.
+  --layout-tooltip: 280px.
+  --layout-dropdown: 320px.
+
+  /* --- Shadows & Elevation --- */
+  --shadow-level0: none.
+  --shadow-level1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2).
+  --shadow-level2: 0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2).
+  --shadow-level3: 0 10px 20px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2).
+  --shadow-level4: 0 20px 40px rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.3).
+
+  --shadow-cyan-glow: 0 0 20px rgba(45, 212, 191, 0.15).
+  --shadow-cyan-glow-strong: 0 0 40px rgba(45, 212, 191, 0.3).
+  --shadow-cyan-focus: 0 0 0 2px #2DD4BF, 0 0 0 4px rgba(45, 212, 191, 0.2).
+  --shadow-cyan-focus-inset: inset 0 0 0 2px #2DD4BF.
+
+  --shadow-magenta-glow: 0 0 20px rgba(217, 70, 239, 0.15).
+  --shadow-magenta-focus: 0 0 0 2px #D946EF, 0 0 0 4px rgba(217, 70, 239, 0.2).
+
+  --shadow-inset-sm: inset 0 1px 2px rgba(0, 0, 0, 0.2).
+  --shadow-inset-md: inset 0 2px 4px rgba(0, 0, 0, 0.3).
+  --shadow-inset-border: inset 0 0 0 1px rgba(255, 255, 255, 0.05).
+
+  /* --- Motion --- */
+  --motion-instant: 0ms.
+  --motion-snap: 150ms.
+  --motion-fast: 200ms.
+  --motion-normal: 300ms.
+  --motion-slow: 400ms.
+  --motion-slowest: 500ms.
+
+  --easing-linear: linear.
+  --easing-ease-in: cubic-bezier(0.4, 0, 1, 1).
+  --easing-ease-out: cubic-bezier(0, 0, 0.2, 1).
+  --easing-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1).
+  --easing-snap: cubic-bezier(0.34, 1.56, 0.64, 1).
+  --easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275).
+
+  --motion-hover-duration: 150ms.
+  --motion-hover-easing: easeOut.
+  --motion-press-duration: 100ms.
+  --motion-press-easing: easeIn.
+  --motion-focus-duration: 150ms.
+  --motion-focus-easing: easeOut.
+  --motion-panel-slide-duration: 300ms.
+  --motion-panel-slide-easing: easeOut.
+  --motion-modal-enter-duration: 250ms.
+  --motion-modal-enter-easing: easeOut.
+  --motion-modal-exit-duration: 200ms.
+  --motion-modal-exit-easing: easeIn.
+  --motion-tooltip-duration: 200ms.
+  --motion-tooltip-easing: easeOut.
+  --motion-dropdown-duration: 200ms.
+  --motion-dropdown-easing: easeOut.
+  --motion-drawer-duration: 300ms.
+  --motion-drawer-easing: easeOut.
+  --motion-ai-scanning-duration: 2000ms.
+  --motion-ai-scanning-easing: linear.
+  --motion-ai-scanning-iterations: infinite.
+  --motion-pulse-duration: 1500ms.
+  --motion-pulse-easing: easeInOut.
+  --motion-pulse-iterations: infinite.
+  --motion-skeleton-duration: 1500ms.
+  --motion-skeleton-easing: easeInOut.
+  --motion-skeleton-iterations: infinite.
+  --motion-page-transition-duration: 300ms.
+  --motion-page-transition-easing: easeInOut.
+  --motion-sidebar-collapse-duration: 300ms.
+  --motion-sidebar-collapse-easing: easeOut.
+  --motion-tab-switch-duration: 200ms.
+  --motion-tab-switch-easing: easeOut.
+  --motion-accordion-duration: 250ms.
+  --motion-accordion-easing: easeOut.
+  --motion-progress-duration: 500ms.
+  --motion-progress-easing: easeOut.
+  --motion-toast-duration: 200ms.
+  --motion-toast-easing: easeOut.
+  --motion-command-palette-duration: 200ms.
+  --motion-command-palette-easing: easeOut.
+
+  /* --- Border Radius --- */
+  --radius-none: 0px.
+  --radius-xs: 2px.
+  --radius-sm: 4px.
+  --radius-md: 6px.
+  --radius-lg: 8px.
+  --radius-xl: 12px.
+  --radius-2xl: 16px.
+  --radius-full: 9999px.
+
+  --radius-input: 4px.
+  --radius-button: 6px.
+  --radius-card: 8px.
+  --radius-modal: 12px.
+  --radius-tooltip: 6px.
+  --radius-dropdown: 8px.
+  --radius-avatar: 9999px.
+  --radius-chip: 4px.
+  --radius-progress: 2px.
+
+  /* --- Breakpoints --- */
+  --bp-mobile: 375px.
+  --bp-mobile-lg: 428px.
+  --bp-tablet: 768px.
+  --bp-tablet-lg: 1024px.
+  --bp-desktop: 1280px.
+  --bp-desktop-lg: 1440px.
+  --bp-desktop-xl: 1920px.
+  --bp-desktop-2xl: 2560px.
+
+  --bp-mobile-only: (max-width: 767px).
+  --bp-tablet-only: (min-width: 768px) and (max-width: 1023px).
+  --bp-desktop-only: (min-width: 1024px).
+  --bp-mobile-and-tablet: (max-width: 1023px).
+  --bp-tablet-and-desktop: (min-width: 768px).
+
+  /* --- Z-Index --- */
+  --z-base: 0.
+  --z-dropdown: 100.
+  --z-sticky: 200.
+  --z-fixed: 300.
+  --z-modal-backdrop: 400.
+  --z-modal: 500.
+  --z-popover: 600.
+  --z-tooltip: 700.
+  --z-toast: 800.
+  --z-command-palette: 900.
+  --z-loading-overlay: 1000.
+
+  /* --- Component Tokens --- */
+  --button-height-sm: 32px.
+  --button-height-md: 40px.
+  --button-height-lg: 48px.
+  --button-height-xl: 56px.
+  --button-padding-sm: 8px 16px.
+  --button-padding-md: 10px 20px.
+  --button-padding-lg: 12px 24px.
+  --button-padding-xl: 14px 28px.
+  --button-icon-gap: 8px.
+  --button-icon-size: 16px.
+  --button-border-radius: 6px.
+
+  --input-height-sm: 36px.
+  --input-height-md: 44px.
+  --input-height-lg: 52px.
+  --input-padding: 0 16px.
+  --input-icon-gap: 12px.
+  --input-icon-size: 18px.
+  --input-border-radius: 4px.
+
+  --table-row-height-compact: 40px.
+  --table-row-height-normal: 48px.
+  --table-row-height-comfortable: 56px.
+  --table-cell-padding: 0 16px.
+  --table-header-height: 44px.
+  --table-border-width: 1px.
+  --table-border-color: #1E293B.
+
+  --modal-max-width-sm: 400px.
+  --modal-max-width-md: 560px.
+  --modal-max-width-lg: 720px.
+  --modal-max-width-xl: 960px.
+  --modal-max-width-full: 100%.
+  --modal-padding: 24px.
+  --modal-header-height: 56px.
+  --modal-footer-height: 64px.
+  --modal-border-radius: 12px.
+
+  --drawer-width-sm: 320px.
+  --drawer-width-md: 400px.
+  --drawer-width-lg: 520px.
+  --drawer-width-full: 100%.
+  --drawer-padding: 24px.
+  --drawer-border-radius: 12px.
+
+  --icon-size-xs: 12px.
+  --icon-size-sm: 16px.
+  --icon-size-md: 20px.
+  --icon-size-lg: 24px.
+  --icon-size-xl: 28px.
+  --icon-size-2xl: 32px.
+  --icon-size-button: 16px.
+  --icon-size-input: 18px.
+  --icon-size-header: 20px.
+  --icon-size-sidebar: 20px.
+  --icon-size-card: 24px.
+  --icon-size-empty-state: 64px.
+  --icon-size-loading: 24px.
+  --icon-stroke-thin: 1.5.
+  --icon-stroke-normal: 2.
+  --icon-stroke-thick: 2.5.
+
+}
+
+/* --- Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .ai-scanning-bar::after,
+  .live-indicator,
+  .skeleton {
+    animation: none !important;
+  }
+
+  .skeleton {
+    background: var(--color-surface-container);
+  }
+}
+
+/* --- Print Styles --- */
+@media print {
+  .no-print { display: none !important; }
+}
