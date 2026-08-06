@@ -3,16 +3,18 @@ import { MemoryOverview } from './MemoryOverview'
 import { MemoryNotes } from './MemoryNotes'
 import { MemoryOmi } from './MemoryOmi'
 import { MemoryGraph } from './MemoryGraph'
+import { MemoryVectorSearch } from './MemoryVectorSearch'
 import { MemorySources } from './MemorySources'
 import { MemorySettings } from './MemorySettings'
 
-type TabId = 'recent' | 'notes' | 'omi' | 'graph' | 'sources' | 'settings'
+type TabId = 'recent' | 'notes' | 'omi' | 'graph' | 'vector-search' | 'sources' | 'settings'
 
 const TABS: Array<{ id: TabId; label: string; icon: string }> = [
   { id: 'recent', label: 'Recent', icon: '◴' },
   { id: 'notes', label: 'Notes', icon: '◧' },
   { id: 'omi', label: 'Omi', icon: '◉' },
   { id: 'graph', label: 'Graph', icon: '◬' },
+  { id: 'vector-search', label: 'Vector Search', icon: '∿' },
   { id: 'sources', label: 'Sources', icon: '⊕' },
   { id: 'settings', label: 'Settings', icon: '⚙' },
 ]
@@ -47,13 +49,14 @@ function MemoryWorkspace({ tab, setTab }: { tab: string; setTab: (t: string) => 
       </div>
 
       <div className="ws-body">
-        {tab === 'recent' && <MemoryOverview />}
-        {tab === 'notes' && <MemoryNotes />}
-        {tab === 'omi' && <MemoryOmi />}
-        {tab === 'graph' && <MemoryGraph />}
-        {tab === 'sources' && <MemorySources />}
-        {tab === 'settings' && <MemorySettings />}
-      </div>
+              {tab === 'recent' && <MemoryOverview />}
+              {tab === 'notes' && <MemoryNotes />}
+              {tab === 'omi' && <MemoryOmi />}
+              {tab === 'graph' && <MemoryGraph />}
+              {tab === 'vector-search' && <MemoryVectorSearch />}
+              {tab === 'sources' && <MemorySources />}
+              {tab === 'settings' && <MemorySettings />}
+            </div>
     </>
   )
 }

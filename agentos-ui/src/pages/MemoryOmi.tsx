@@ -1,95 +1,134 @@
+// Omi - Migrated to use shared AI components
+// Source: Google Stitch Project 10866743485103090405
+// Design System: Hermes AI OS
+
 import { MEMORY_NOTES } from '../lib/memory-data'
+import { Card } from '../design-system/components/data-display/Card'
+import { Badge } from '../design-system/components/data-display/Badge'
+import { ProviderBadge } from '../design-system/components/specialized/ProviderBadge'
+
+const omiNotes = MEMORY_NOTES.filter((n) => n.source === 'omi')
+const totalDuration = omiNotes.reduce((sum, n) => sum + Math.floor(n.size / 100), 0)
+const totalWords = omiNotes.reduce((sum, n) => sum + n.wordCount, 0)
 
 export function MemoryOmi() {
-  const omiNotes = MEMORY_NOTES.filter((n) => n.source === 'omi')
-  const totalDuration = omiNotes.reduce((sum, n) => sum + Math.floor(n.size / 100), 0) // mock duration
-  const totalWords = omiNotes.reduce((sum, n) => sum + n.wordCount, 0)
-
   return (
     <div className="page-body">
-      <div className="status-pills" style={{ paddingLeft: 0, paddingRight: 0 }}>
-        <span className="badge badge-green"><span className="dot dot-green" /> device connected</span>
-        <span className="badge badge-cyan"><span className="mono">{omiNotes.length} captures</span></span>
-        <span className="badge badge-purple"><span className="mono">{totalWords.toLocaleString()} words</span></span>
-        <span className="badge badge-gray"><span className="mono">~{totalDuration}m audio</span></span>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-3)', marginBottom: 'var(--spacing-4)' }}>
+        <ProviderBadge simpleProvider={{ name: 'Omi', status: 'connected', icon: '◉', iconColor: '#00e5ff' }} size="md" label="device connected" />
+        <Badge variant="info" size="md" dot>{omiNotes.length} captures</Badge>
+        <Badge variant="primary" size="md" dot>{totalWords.toLocaleString()} words</Badge>
+        <Badge variant="default" size="md" dot>~{totalDuration}m audio</Badge>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
-        <div className="panel">
-          <div className="section-label"><span className="ico">◉</span> DEVICE STATUS</div>
-          <div className="grid2" style={{ marginBottom: 16 }}>
-            <div className="panel-sm"><div className="stat-label">DEVICE ID</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>omi-001</div></div>
-            <div className="panel-sm"><div className="stat-label">FIRMWARE</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>v2.4.1</div></div>
-            <div className="panel-sm"><div className="stat-label">BATTERY</div><div style={{ fontSize: 14, fontWeight: 500, color: '#22d97a', fontFamily: 'JetBrains Mono, monospace' }}>87%</div></div>
-            <div className="panel-sm"><div className="stat-label">STORAGE</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>2.3 GB / 8 GB</div></div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-3)', marginBottom: 'var(--spacing-4)' }}>
+        <Card variant="outlined">
+          <div style={{ fontSize: 'var(--text-label-sm)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-3)' }}>
+            DEVICE STATUS
           </div>
-          <div className="section-label"><span className="ico">⌘</span> CAPTURE SETTINGS</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 11, color: '#9ba4c0' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}><input type="checkbox" defaultChecked /> Auto-transcribe on capture</label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}><input type="checkbox" defaultChecked /> Segment by speaker</label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}><input type="checkbox" defaultChecked /> Remove filler words</label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}><input type="checkbox" /> Auto-link to projects</label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}><input type="checkbox" defaultChecked /> Sync to vault on WiFi</label>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--spacing-3)', marginBottom: 'var(--spacing-3)' }}>
+            <div className="panel-sm">
+              <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>DEVICE ID</div>
+              <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>omi-001</div>
+            </div>
+            <div className="panel-sm">
+              <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>FIRMWARE</div>
+              <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>v2.4.1</div>
+            </div>
+            <div className="panel-sm">
+              <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>BATTERY</div>
+              <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: '#22d97a', fontFamily: 'var(--font-mono)' }}>87%</div>
+            </div>
+            <div className="panel-sm">
+              <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>STORAGE</div>
+              <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>2.3 GB / 8 GB</div>
+            </div>
           </div>
-        </div>
+          <div style={{ fontSize: 'var(--text-label-sm)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-2)' }}>
+            CAPTURE SETTINGS
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-2)', fontSize: 'var(--text-body-sm)', color: 'var(--color-text-tertiary)' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)', cursor: 'pointer' }}><input type="checkbox" defaultChecked /> Auto-transcribe on capture</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)', cursor: 'pointer' }}><input type="checkbox" defaultChecked /> Segment by speaker</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)', cursor: 'pointer' }}><input type="checkbox" defaultChecked /> Remove filler words</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)', cursor: 'pointer' }}><input type="checkbox" /> Auto-link to projects</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)', cursor: 'pointer' }}><input type="checkbox" defaultChecked /> Sync to vault on WiFi</label>
+          </div>
+        </Card>
 
-        <div className="panel">
-          <div className="section-label"><span className="ico">∿</span> CAPTURE STATISTICS</div>
-          <div className="grid2" style={{ marginBottom: 16 }}>
-            <Stat label="TODAY" value="3" sub="captures" />
-            <Stat label="THIS WEEK" value="18" sub="captures" />
-            <Stat label="TOTAL DURATION" value="4.2h" sub="audio" />
-            <Stat label="AVG LENGTH" value="14m" sub="per capture" />
+        <Card variant="outlined">
+          <div style={{ fontSize: 'var(--text-label-sm)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-3)' }}>
+            CAPTURE STATISTICS
           </div>
-          <div className="section-label"><span className="ico">◴</span> RECENT CAPTURES</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--spacing-3)', marginBottom: 'var(--spacing-3)' }}>
+            <div className="panel-sm">
+              <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>TODAY</div>
+              <div style={{ fontSize: 'var(--text-display-md)', fontWeight: 700, fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)' }}>3</div>
+              <div style={{ fontSize: 'var(--text-label-xs)', color: 'var(--color-text-quaternary)' }}>captures</div>
+            </div>
+            <div className="panel-sm">
+              <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>THIS WEEK</div>
+              <div style={{ fontSize: 'var(--text-display-md)', fontWeight: 700, fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)' }}>18</div>
+              <div style={{ fontSize: 'var(--text-label-xs)', color: 'var(--color-text-quaternary)' }}>captures</div>
+            </div>
+            <div className="panel-sm">
+              <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>TOTAL DURATION</div>
+              <div style={{ fontSize: 'var(--text-display-md)', fontWeight: 700, fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)' }}>4.2h</div>
+              <div style={{ fontSize: 'var(--text-label-xs)', color: 'var(--color-text-quaternary)' }}>audio</div>
+            </div>
+            <div className="panel-sm">
+              <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>AVG LENGTH</div>
+              <div style={{ fontSize: 'var(--text-display-md)', fontWeight: 700, fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)' }}>14m</div>
+              <div style={{ fontSize: 'var(--text-label-xs)', color: 'var(--color-text-quaternary)' }}>per capture</div>
+            </div>
+          </div>
+          <div style={{ fontSize: 'var(--text-label-sm)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-2)' }}>
+            RECENT CAPTURES
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-2)' }}>
             {[
               { title: 'Team standup — Q3 planning', time: '2h ago', duration: '23m', status: 'transcribed' },
               { title: 'Design review — Agent workspace', time: '5h ago', duration: '45m', status: 'transcribed' },
               { title: 'Walk & think — Distribution ideas', time: '1d ago', duration: '12m', status: 'processing' },
               { title: 'Client call — API integration', time: '2d ago', duration: '38m', status: 'transcribed' },
             ].map((c, i) => (
-              <div key={i} className="table-row">
-                <span style={{ fontSize: 16, color: '#00e5ff' }}>◉</span>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)', padding: 'var(--spacing-2)', backgroundColor: 'var(--color-surface-container)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-primary)' }}>
+                <span style={{ fontSize: 'var(--text-body-lg)', color: '#00e5ff' }}>◉</span>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 12.5, fontWeight: 500, color: '#e8eaf6' }}>{c.title}</div>
-                  <div style={{ fontSize: 10.5, color: '#6b7494' }}>{c.time} · {c.duration}</div>
+                  <div style={{ fontSize: 'var(--text-body-sm)', fontWeight: 500, color: 'var(--color-text-primary)' }}>{c.title}</div>
+                  <div style={{ fontSize: 'var(--text-label-xs)', color: 'var(--color-text-tertiary)' }}>{c.time} · {c.duration}</div>
                 </div>
-                <span className={'badge ' + (c.status === 'transcribed' ? 'badge-green' : 'badge-amber')} style={{ fontSize: 9.5 }}>{c.status}</span>
+                <Badge variant={c.status === 'transcribed' ? 'success' : 'warning'} size="sm">{c.status}</Badge>
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </div>
 
-      <div className="panel">
-        <div className="section-label"><span className="ico">◧</span> OMI NOTES · {omiNotes.length}</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <Card variant="outlined">
+        <div style={{ fontSize: 'var(--text-label-sm)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-3)' }}>
+          OMI NOTES · {omiNotes.length}
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-2)' }}>
           {omiNotes.map((n) => (
-            <div key={n.id} style={{ padding: '12px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.06)', background: '#141830' }}>
-              <div className="row" style={{ marginBottom: 8 }}>
-                <span style={{ fontSize: 13, fontWeight: 500, color: '#e8eaf6', flex: 1 }}>{n.title}</span>
-                <span className="badge badge-cyan" style={{ fontSize: 9.5 }}>{n.wordCount} words</span>
-                <span style={{ fontSize: 10, color: '#6b7494', fontFamily: 'JetBrains Mono, monospace' }}>{n.modified}</span>
+            <div key={n.id} style={{ padding: 'var(--spacing-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-primary)', backgroundColor: 'var(--color-surface-container)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)', marginBottom: 'var(--spacing-2)' }}>
+                <span style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)', flex: 1 }}>{n.title}</span>
+                <Badge variant="info" size="sm">{n.wordCount} words</Badge>
+                <span style={{ fontSize: 'var(--text-label-xs)', fontFamily: 'var(--font-mono)', color: 'var(--color-text-tertiary)' }}>{n.modified}</span>
               </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 4 }}>
-                {n.tags.map((t) => <span key={t} className="collab-chip" style={{ fontSize: 9.5 }}>{t}</span>)}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-1)', marginBottom: 'var(--spacing-2)' }}>
+                {n.tags.map((t) => (
+                  <Badge key={t} variant="default" size="sm">{t}</Badge>
+                ))}
               </div>
-              <div style={{ fontSize: 11, color: '#9ba4c0', lineHeight: 1.5 }}>{n.content.slice(0, 200)}...</div>
+              <div style={{ fontSize: 'var(--text-body-sm)', color: 'var(--color-text-tertiary)', lineHeight: 1.5 }}>
+                {n.content.slice(0, 200)}...
+              </div>
             </div>
           ))}
         </div>
-      </div>
-    </div>
-  )
-}
-
-function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return (
-    <div className="panel-sm">
-      <div className="stat-label">{label}</div>
-      <div className="stat-val" style={{ fontSize: 20 }}>{value}</div>
-      <div className="stat-sub">{sub}</div>
+      </Card>
     </div>
   )
 }

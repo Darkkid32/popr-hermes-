@@ -26,7 +26,7 @@ export interface DataSource {
   id: string
   name: string
   type: string
-  status: 'connected' | 'disconnected' | 'syncing'
+  status: 'connected' | 'disconnected' | 'syncing' | 'error'
   documentCount: number
   lastIndexed: string
 }

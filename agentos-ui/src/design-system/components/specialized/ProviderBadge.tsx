@@ -15,31 +15,53 @@ export interface Provider {
   apiEndpoint?: string
 }
 
+// Simple provider config for basic usage
+export interface SimpleProvider {
+  name: string
+  status: 'connected' | 'disconnected' | 'degraded' | 'syncing' | 'error'
+  icon?: string
+  iconColor?: string
+  modelsCount?: number
+  label?: string
+}
+
 export type ProviderBadgeSize = 'sm' | 'md' | 'lg'
 
 const STATUS_COLORS = {
   connected: { bg: 'var(--color-success-base)/15', text: 'var(--color-success-base)', dot: 'var(--color-success-base)' },
   disconnected: { bg: 'var(--color-error-base)/15', text: 'var(--color-error-base)', dot: 'var(--color-error-base)' },
   degraded: { bg: 'var(--color-warning-base)/15', text: 'var(--color-warning-base)', dot: 'var(--color-warning-base)' },
+  syncing: { bg: 'var(--color-warning-base)/15', text: 'var(--color-warning-base)', dot: 'var(--color-warning-base)' },
+  error: { bg: 'var(--color-error-base)/15', text: 'var(--color-error-base)', dot: 'var(--color-error-base)' },
 }
 
 interface ProviderBadgeProps {
-  provider: Provider
+  provider?: Provider
+  simpleProvider?: SimpleProvider
   size?: ProviderBadgeSize
   showStatus?: boolean
   showModelCount?: boolean
   variant?: 'default' | 'compact' | 'detailed'
+  label?: string
 }
 
 export function ProviderBadge({
   provider,
+  simpleProvider,
   size = 'md',
   showStatus = true,
   showModelCount = true,
   variant = 'default',
+  label,
 }: ProviderBadgeProps) {
-  const statusColors = STATUS_COLORS[provider.status]
+  const isSimple = !!simpleProvider
+  const p = isSimple ? simpleProvider : provider!
+  const statusColors = STATUS_COLORS[p.status] || STATUS_COLORS.disconnected
   const avatarSize = size === 'sm' ? 'sm' : size === 'md' ? 'md' : 'lg'
+  const icon = isSimple ? p.icon : p.icon
+  const iconColor = isSimple ? (p.iconColor || '#9ba4c0') : p.iconColor
+  const name = isSimple ? p.name : p.name
+  const modelsCount = isSimple ? 0 : p.modelsCount
 
   if (variant === 'compact') {
     return (
@@ -54,20 +76,25 @@ export function ProviderBadge({
           border: '1px solid var(--color-border-primary)',
         }}
       >
-        <Avatar size={avatarSize} name={provider.name} src="" style={{ backgroundColor: provider.iconColor + '22', color: provider.iconColor, borderColor: provider.iconColor + '44' }}>
-          {provider.icon}
+        <Avatar size={avatarSize} name={name} src="" style={{ backgroundColor: iconColor + '22', color: iconColor, borderColor: iconColor + '44' }}>
+          {icon}
         </Avatar>
         <span style={{ fontWeight: 600, color: 'var(--color-text-primary)', fontSize: size === 'sm' ? 'var(--text-body-sm)' : 'var(--text-body-md)' }}>
-          {provider.name}
+          {name}
         </span>
-        {showModelCount && (
+        {showModelCount && !isSimple && (
           <Badge variant="default" size="sm">
-            {provider.modelsCount} models
+            {modelsCount} models
+          </Badge>
+        )}
+        {label && (
+          <Badge variant="default" size="sm">
+            {label}
           </Badge>
         )}
         {showStatus && (
           <Badge variant="default" size="sm" dot style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
-            {provider.status.charAt(0).toUpperCase() + provider.status.slice(1)}
+            {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
           </Badge>
         )}
       </div>
@@ -89,27 +116,27 @@ export function ProviderBadge({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
-          <Avatar size="lg" name={provider.name} src="" style={{ backgroundColor: provider.iconColor + '22', color: provider.iconColor, borderColor: provider.iconColor + '44' }}>
-            {provider.icon}
+          <Avatar size="lg" name={name} src="" style={{ backgroundColor: iconColor + '22', color: iconColor, borderColor: iconColor + '44' }}>
+            {icon}
           </Avatar>
           <div>
             <div style={{ fontWeight: 600, color: 'var(--color-text-primary)', fontSize: 'var(--text-body-lg)' }}>
-              {provider.name}
+              {name}
             </div>
             <div style={{ fontSize: 'var(--text-body-sm)', color: 'var(--color-text-tertiary)' }}>
-              {provider.modelsCount} models · {provider.apiEndpoint}
+              {!isSimple && `${modelsCount} models · {provider.apiEndpoint}`}
             </div>
           </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-2)' }}>
           {showStatus && (
             <Badge variant="default" size="md" dot style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
-              {provider.status.charAt(0).toUpperCase() + provider.status.slice(1)}
+              {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
             </Badge>
           )}
-          {showModelCount && (
+          {showModelCount && !isSimple && (
             <Badge variant="info" size="md">
-              {provider.modelsCount} models
+              {modelsCount} models
             </Badge>
           )}
         </div>
@@ -126,20 +153,25 @@ export function ProviderBadge({
         gap: 'var(--spacing-2)',
       }}
     >
-      <Avatar size={avatarSize} name={provider.name} src="" style={{ backgroundColor: provider.iconColor + '22', color: provider.iconColor, borderColor: provider.iconColor + '44' }}>
-        {provider.icon}
+      <Avatar size={avatarSize} name={name} src="" style={{ backgroundColor: iconColor + '22', color: iconColor, borderColor: iconColor + '44' }}>
+        {icon}
       </Avatar>
       <span style={{ fontWeight: 600, color: 'var(--color-text-primary)', fontSize: size === 'sm' ? 'var(--text-body-sm)' : size === 'md' ? 'var(--text-body-md)' : 'var(--text-body-lg)' }}>
-        {provider.name}
+        {name}
       </span>
-      {showModelCount && (
+      {showModelCount && !isSimple && (
         <Badge variant="info" size={size === 'sm' ? 'sm' : 'md'}>
-          {provider.modelsCount} models
+          {modelsCount} models
+        </Badge>
+      )}
+      {label && (
+        <Badge variant="default" size={size === 'sm' ? 'sm' : 'md'}>
+          {label}
         </Badge>
       )}
       {showStatus && (
         <Badge variant="default" size={size === 'sm' ? 'sm' : 'md'} dot style={{ backgroundColor: statusColors.bg, color: statusColors.text }}>
-          {provider.status.charAt(0).toUpperCase() + provider.status.slice(1)}
+          {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
         </Badge>
       )}
     </div>
