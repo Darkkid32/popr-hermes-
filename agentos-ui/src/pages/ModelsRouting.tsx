@@ -1,31 +1,39 @@
+// Models Routing - Migrated to use shared AI components
+// Source: Google Stitch Project 10866743485103090405
+// Design System: Hermes AI OS
+
 import { useState } from 'react'
 import { MODEL_ROUTING_RULES, MODELS } from '../lib/models-data'
 import { useModelsStore } from '../stores/ModelsStore'
+import { RoutingRuleCard } from '../design-system/components/specialized/RoutingRuleCard'
+import { SearchFilters } from '../design-system/components/specialized/SearchFilters'
+import type { RoutingRule } from '../design-system/components/specialized/RoutingRuleCard'
 
 export function ModelsRouting() {
   const { routingRules, addRoutingRule, updateRoutingRule, deleteRoutingRule } = useModelsStore()
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [newRule, setNewRule] = useState({
-    name: '',
-    condition: 'true',
-    targetModel: '',
-    fallbackModel: '',
-    priority: 10,
-    enabled: true,
-  })
+  const [newRule, setNewRule] = useState<RoutingRule>({
+      id: '',
+      name: '',
+      condition: 'true',
+      targetModel: '',
+      fallbackModel: null,
+      priority: 10,
+      enabled: true,
+    })
 
   const rules = routingRules.length > 0 ? routingRules : MODEL_ROUTING_RULES
 
   const handleAdd = () => {
-    if (!newRule.name || !newRule.targetModel) return
-    const rule = {
-      ...newRule,
-      id: 'rr-' + Date.now(),
-      fallbackModel: newRule.fallbackModel || null,
-    }
-    addRoutingRule(rule)
-    setNewRule({ name: '', condition: 'true', targetModel: '', fallbackModel: '', priority: 10, enabled: true })
-  }
+          if (!newRule.name || !newRule.targetModel) return
+          const rule = {
+            ...newRule,
+            id: 'rr-' + Date.now(),
+            fallbackModel: newRule.fallbackModel || null,
+          }
+          addRoutingRule(rule)
+          setNewRule({ id: '', name: '', condition: 'true', targetModel: '', fallbackModel: null, priority: 10, enabled: true })
+        }
 
   const handleSave = (id: string) => {
     const rule = rules.find((r) => r.id === id)
@@ -38,6 +46,11 @@ export function ModelsRouting() {
   const handleDelete = (id: string) => {
     deleteRoutingRule(id)
   }
+
+  // SearchFilters configuration
+  const filterConfigs = [
+    { key: 'search', label: 'Search', type: 'search' as const, placeholder: 'Search routing rules...' },
+  ]
 
   return (
     <div className="page-body">
@@ -52,20 +65,26 @@ export function ModelsRouting() {
         <div className="col-stack">
           <div className="panel">
             <div className="section-label"><span className="ico">⌘</span> ROUTING RULES</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <SearchFilters
+              filters={filterConfigs}
+              values={{ search: '' }}
+              onChange={() => {}}
+            />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
               {rules
                 .slice()
                 .sort((a, b) => a.priority - b.priority)
                 .map((rule) => (
-                  <RoutingRuleRow
+                  <RoutingRuleCard
                     key={rule.id}
                     rule={rule}
+                    models={MODELS}
+                    priority={rule.priority}
                     isEditing={editingId === rule.id}
                     onEdit={() => setEditingId(rule.id)}
                     onSave={() => handleSave(rule.id)}
                     onCancel={() => setEditingId(null)}
                     onDelete={() => handleDelete(rule.id)}
-                    models={MODELS}
                   />
                 ))}
             </div>
@@ -94,12 +113,12 @@ export function ModelsRouting() {
                     <option key={m.id} value={m.id}>{m.name} ({m.provider})</option>
                   ))}
                 </select>
-                <select className="field-input" value={newRule.fallbackModel} onChange={(e) => setNewRule({ ...newRule, fallbackModel: e.target.value })}>
-                  <option value="">No fallback (optional)</option>
-                  {MODELS.filter((m) => m.status === 'available').map((m) => (
-                    <option key={m.id} value={m.id}>{m.name} ({m.provider})</option>
-                  ))}
-                </select>
+                <select className="field-input" value={newRule.fallbackModel ?? ''} onChange={(e) => setNewRule({ ...newRule, fallbackModel: e.target.value === '' ? null : e.target.value })}>
+                                  <option value="">No fallback (optional)</option>
+                                  {MODELS.filter((m) => m.status === 'available').map((m) => (
+                                    <option key={m.id} value={m.id}>{m.name} ({m.provider})</option>
+                                  ))}
+                                </select>
               </div>
               <div className="grid2">
                 <div>
@@ -174,75 +193,6 @@ export function ModelsRouting() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  )
-}
-
-function RoutingRuleRow({
-  rule,
-  isEditing,
-  onEdit,
-  onSave,
-  onCancel,
-  onDelete,
-  models,
-}: {
-  rule: any
-  isEditing: boolean
-  onEdit: () => void
-  onSave: () => void
-  onCancel: () => void
-  onDelete: () => void
-  models: any[]
-}) {
-  const targetModel = models.find((m) => m.id === rule.targetModel)
-  const fallbackModel = rule.fallbackModel ? models.find((m) => m.id === rule.fallbackModel) : null
-
-  if (isEditing) {
-    return (
-      <div className="panel-sm" style={{ borderLeft: '3px solid #d946ef' }}>
-        <div className="grid2">
-          <input className="field-input" value={rule.name} onChange={(e) => (rule.name = e.target.value)} />
-          <select className="field-input" value={rule.targetModel} onChange={(e) => (rule.targetModel = e.target.value)}>
-            {models.filter((m) => m.status === 'available').map((m) => (
-              <option key={m.id} value={m.id}>{m.name}</option>
-            ))}
-          </select>
-        </div>
-        <input className="field-input" value={rule.condition} onChange={(e) => (rule.condition = e.target.value)} placeholder="Condition expression" />
-        <div className="grid2">
-          <select className="field-input" value={rule.fallbackModel || ''} onChange={(e) => (rule.fallbackModel = e.target.value || null)}>
-            <option value="">No fallback</option>
-            {models.filter((m) => m.status === 'available').map((m) => (
-              <option key={m.id} value={m.id}>{m.name}</option>
-            ))}
-          </select>
-          <input type="number" className="field-input" min="1" max="100" value={rule.priority} onChange={(e) => (rule.priority = parseInt(e.target.value))} placeholder="Priority" />
-        </div>
-        <div className="row" style={{ gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
-          <button className="btn-secondary" onClick={onCancel}>Cancel</button>
-          <button className="btn-primary" onClick={onSave}>Save</button>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="panel-sm">
-      <div className="row" style={{ gap: 8 }}>
-        <span className="badge badge-purple" style={{ fontSize: 11, minWidth: 30, textAlign: 'center' }}>#{rule.priority}</span>
-        <span style={{ fontSize: 13, fontWeight: 500, color: '#e8eaf6', flex: 1 }}>{rule.name}</span>
-        <span className={'badge ' + (rule.enabled ? 'badge-green' : 'badge-gray')} style={{ fontSize: 9.5 }}>{rule.enabled ? 'ON' : 'OFF'}</span>
-        <button className="btn-secondary" style={{ fontSize: 10, padding: '3px 8px' }} onClick={onEdit}>Edit</button>
-        <button className="btn-secondary" style={{ fontSize: 10, padding: '3px 8px', color: '#ff4d6d', borderColor: '#ff4d6d' }} onClick={onDelete}>Delete</button>
-      </div>
-      <div style={{ fontSize: 10, color: '#6b7494', marginTop: 6, marginLeft: 40, fontFamily: 'JetBrains Mono, monospace' }}>
-        IF {rule.condition}
-      </div>
-      <div style={{ fontSize: 10, color: '#00e5ff', marginLeft: 40, fontFamily: 'JetBrains Mono, monospace' }}>
-        → {targetModel?.name || rule.targetModel}
-        {fallbackModel && <span style={{ color: '#ffb347' }}> ↳ {fallbackModel.name}</span>}
       </div>
     </div>
   )

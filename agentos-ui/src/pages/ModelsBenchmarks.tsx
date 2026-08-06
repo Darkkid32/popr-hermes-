@@ -1,6 +1,10 @@
+// Models Benchmarks - Migrated to use shared AI components
+// Source: Google Stitch Project 10866743485103090405
+// Design System: Hermes AI OS
+
 import { MODEL_BENCHMARKS } from '../lib/models-data'
-import { Canvas } from '../components/Canvas'
-import { useCallback, useState } from 'react'
+import { BenchmarkChart } from '../design-system/components/specialized/BenchmarkChart'
+import { useState } from 'react'
 
 const PROVIDER_COLOR: Record<string, string> = {
   OpenAI: '#7c6cf5',
@@ -29,80 +33,6 @@ export function ModelsBenchmarks() {
     return sortDesc ? bVal - aVal : aVal - bVal
   })
 
-  const drawRadarChart = useCallback((ctx: CanvasRenderingContext2D, W: number, H: number) => {
-    ctx.clearRect(0, 0, W, H)
-    const metrics = ['mmlu', 'humaneval', 'gsm8k', 'bbh']
-    const models = sortedBenchmarks.slice(0, 6)
-    const centerX = W / 2
-    const centerY = H / 2
-    const radius = Math.min(W, H) / 2 - 40
-
-    // Draw axes
-    metrics.forEach((_m, i) => {
-      const angle = (i / metrics.length) * Math.PI * 2 - Math.PI / 2
-      const x = centerX + Math.cos(angle) * radius
-      const y = centerY + Math.sin(angle) * radius
-      ctx.beginPath()
-      ctx.moveTo(centerX, centerY)
-      ctx.lineTo(x, y)
-      ctx.strokeStyle = 'rgba(255,255,255,0.10)'
-      ctx.lineWidth = 1
-      ctx.stroke()
-
-      // Label
-      ctx.fillStyle = '#9ba4c0'
-      ctx.font = '9px JetBrains Mono, monospace'
-      ctx.textAlign = 'center'
-      ctx.fillText(_m.toUpperCase(), centerX + Math.cos(angle) * (radius + 25), centerY + Math.sin(angle) * (radius + 25) + 4)
-    })
-
-    // Draw rings
-    for (let r = 1; r <= 4; r++) {
-      ctx.beginPath()
-      metrics.forEach((_m2, i) => {
-        const angle = (i / metrics.length) * Math.PI * 2 - Math.PI / 2
-        const x = centerX + Math.cos(angle) * (radius * r / 4)
-        const y = centerY + Math.sin(angle) * (radius * r / 4)
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
-      })
-      ctx.closePath()
-      ctx.strokeStyle = 'rgba(255,255,255,0.06)'
-      ctx.lineWidth = 1
-      ctx.stroke()
-    }
-
-    // Draw models
-    models.forEach((model) => {
-      const color = PROVIDER_COLOR[model.provider] || '#9ba4c0'
-      ctx.beginPath()
-      metrics.forEach((_m3, i) => {
-        const value = (model as any)[_m3] / 100
-        const angle = (i / metrics.length) * Math.PI * 2 - Math.PI / 2
-        const x = centerX + Math.cos(angle) * radius * value
-        const y = centerY + Math.sin(angle) * radius * value
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
-      })
-      ctx.closePath()
-      ctx.fillStyle = color + '33'
-      ctx.fill()
-      ctx.strokeStyle = color
-      ctx.lineWidth = 2
-      ctx.stroke()
-    })
-
-    // Legend
-    models.forEach((model, i) => {
-      const color = PROVIDER_COLOR[model.provider] || '#9ba4c0'
-      const y = 20 + i * 18
-      ctx.fillStyle = color
-      ctx.fillRect(10, y, 12, 12)
-      ctx.fillStyle = '#e8eaf6'
-      ctx.font = '10px Inter, sans-serif'
-      ctx.textAlign = 'left'
-      ctx.fillText(model.modelName, 28, y + 9)
-    })
-  }, [sortedBenchmarks])
-
   return (
     <div className="page-body">
       <div className="status-pills" style={{ paddingLeft: 0, paddingRight: 0 }}>
@@ -116,9 +46,13 @@ export function ModelsBenchmarks() {
         <div className="col-stack">
           <div className="panel">
             <div className="section-label"><span className="ico">∿</span> MULTI-METRIC RADAR (TOP 6)</div>
-            <div className="canvas-wrap" style={{ height: 300 }}>
-              <Canvas id="radar-chart" height={300} draw={drawRadarChart} />
-            </div>
+            <BenchmarkChart
+              data={sortedBenchmarks}
+              metrics={['mmlu', 'humaneval', 'gsm8k', 'bbh']}
+              type="radar"
+              maxModels={6}
+              height={300}
+            />
           </div>
 
           <div className="panel">

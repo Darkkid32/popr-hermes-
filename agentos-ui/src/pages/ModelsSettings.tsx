@@ -1,13 +1,12 @@
-import type { SettingRow } from '../lib/demo-data'
+// Models Settings - Migrated to use shared AI components
+// Source: Google Stitch Project 10866743485103090405
+// Design System: Hermes AI OS
 
-const TONE_COLOR: Record<string, string> = {
-  cyan: '#00e5ff',
-  green: '#22d97a',
-  purple: '#7c6cf5',
-  pink: '#d946ef',
-  dim: '#9ba4c0',
-  default: '#e8eaf6',
-}
+import type { SettingRow } from '../design-system/components/specialized/SettingsSection'
+import { SettingsSection } from '../design-system/components/specialized/SettingsSection'
+import { ProviderBadge } from '../design-system/components/specialized/ProviderBadge'
+import { TokenUsageCard } from '../design-system/components/specialized/TokenUsageCard'
+import { CostCard } from '../design-system/components/specialized/CostCard'
 
 export function ModelsSettings() {
   const MODEL_RUNTIME_SETTINGS: SettingRow[] = [
@@ -46,6 +45,13 @@ export function ModelsSettings() {
     { label: 'Track Local Models', value: 'Free (no cost)', tone: 'green' },
   ]
 
+  const costBreakdown = [
+    { label: 'OpenAI GPT-4o', cost: 8.45, percentage: 55.4, color: '#7c6cf5' },
+    { label: 'Anthropic Claude 3.5', cost: 4.12, percentage: 27.0, color: '#ff4d6d' },
+    { label: 'Groq Llama 3', cost: 1.89, percentage: 12.4, color: '#ffb347' },
+    { label: 'Local (Ollama)', cost: 0.77, percentage: 5.2, color: '#00e5ff' },
+  ]
+
   return (
     <div className="page-body">
       <div className="status-pills" style={{ paddingLeft: 0, paddingRight: 0 }}>
@@ -55,14 +61,70 @@ export function ModelsSettings() {
         <span className="badge badge-gray"><span className="mono">$15.23 spent today</span></span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-        <SettingsPanel rows={MODEL_RUNTIME_SETTINGS} title="Runtime" icon="◰" />
-        <SettingsPanel rows={MODEL_PROVIDER_CONFIG} title="Providers" icon="⊕" />
+      {/* Token Usage & Cost Summary */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
+        <TokenUsageCard
+          usage={{ prompt: 1250000, completion: 890000, total: 2140000, cost: 15.23 }}
+          limit={5000000}
+          period="Today"
+          showBreakdown={false}
+          variant="compact"
+        />
+        <CostCard
+          cost={15.23}
+          period="Today"
+          trend="up"
+          trendValue={12.5}
+          breakdown={costBreakdown}
+          budget={50}
+          variant="compact"
+        />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-        <SettingsPanel rows={MODEL_ROUTING_CONFIG} title="Routing" icon="⌘" />
-        <SettingsPanel rows={MODEL_COST_CONFIG} title="Cost Control" icon="$" />
+        <SettingsSection title="Runtime" icon="◰" rows={MODEL_RUNTIME_SETTINGS} variant="card" columns={1} />
+        <SettingsSection title="Providers" icon="⊕" rows={MODEL_PROVIDER_CONFIG} variant="card" columns={1} />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+        <SettingsSection title="Routing" icon="⌘" rows={MODEL_ROUTING_CONFIG} variant="card" columns={1} />
+        <SettingsSection title="Cost Control" icon="$" rows={MODEL_COST_CONFIG} variant="card" columns={1} />
+      </div>
+
+      <div className="panel" style={{ marginTop: 12 }}>
+        <div className="section-label"><span className="ico">⊕</span> PROVIDER CONFIG</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+          <ProviderBadge
+            provider={{ id: 'ollama', name: 'Ollama', icon: '◌', iconColor: '#00e5ff', status: 'connected', modelsCount: 5, apiEndpoint: 'http://localhost:11434' }}
+            variant="detailed"
+            size="md"
+          />
+          <ProviderBadge
+            provider={{ id: 'openai', name: 'OpenAI', icon: '●', iconColor: '#7c6cf5', status: 'connected', modelsCount: 4, apiEndpoint: 'api.openai.com' }}
+            variant="detailed"
+            size="md"
+          />
+          <ProviderBadge
+            provider={{ id: 'anthropic', name: 'Anthropic', icon: '◐', iconColor: '#ff4d6d', status: 'connected', modelsCount: 3, apiEndpoint: 'api.anthropic.com' }}
+            variant="detailed"
+            size="md"
+          />
+          <ProviderBadge
+            provider={{ id: 'groq', name: 'Groq', icon: '⚡', iconColor: '#ffb347', status: 'connected', modelsCount: 2, apiEndpoint: 'api.groq.com' }}
+            variant="detailed"
+            size="md"
+          />
+          <ProviderBadge
+            provider={{ id: 'google', name: 'Google AI', icon: '★', iconColor: '#f06292', status: 'disconnected', modelsCount: 0, apiEndpoint: 'generativelanguage.googleapis.com' }}
+            variant="detailed"
+            size="md"
+          />
+          <ProviderBadge
+            provider={{ id: 'together', name: 'Together AI', icon: '◆', iconColor: '#00e5ff', status: 'disconnected', modelsCount: 0, apiEndpoint: 'api.together.xyz' }}
+            variant="detailed"
+            size="md"
+          />
+        </div>
       </div>
 
       <div className="panel" style={{ marginTop: 12 }}>
@@ -75,22 +137,6 @@ export function ModelsSettings() {
           <Env label="GROQ_API_KEY" value="gsk_**** (configured)" tone="green" />
           <Env label="TOGETHER_API_KEY" value="Not configured" tone="red" />
         </div>
-      </div>
-    </div>
-  )
-}
-
-function SettingsPanel({ rows, title, icon }: { rows: SettingRow[]; title: string; icon: string }) {
-  return (
-    <div className="panel">
-      <div className="section-label"><span className="ico">{icon}</span> {title.toUpperCase()}</div>
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {rows.map((row, i) => (
-          <div key={i} className="table-row">
-            <span style={{ fontSize: 13, color: '#e8eaf6', flex: 1 }}>{row.label}</span>
-            <span style={{ fontSize: 12.5, color: TONE_COLOR[row.tone] ?? '#e8eaf6', fontWeight: row.tone === 'cyan' || row.tone === 'green' ? 600 : 400, fontFamily: row.tone === 'cyan' || row.tone === 'green' ? 'JetBrains Mono, monospace' : 'inherit' }}>{row.value}</span>
-          </div>
-        ))}
       </div>
     </div>
   )

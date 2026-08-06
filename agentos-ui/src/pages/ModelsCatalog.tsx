@@ -1,12 +1,28 @@
+// Models Catalog - Migrated to use shared AI components
+// Source: Google Stitch Project 10866743485103090405
+// Design System: Hermes AI OS
+
 import { useState } from 'react'
 import { MODELS, MODEL_PROVIDERS } from '../lib/models-data'
 import { useModelsStore } from '../stores/ModelsStore'
+import { ModelCard } from '../design-system/components/specialized/ModelCard'
+import { SearchFilters } from '../design-system/components/specialized/SearchFilters'
+import { DetailDrawer } from '../design-system/components/specialized/DetailDrawer'
+import { ModelCapabilityBadge } from '../design-system/components/specialized/ModelCapabilityBadge'
+import { ProviderBadge } from '../design-system/components/specialized/ProviderBadge'
 
 const TYPE_COLOR: Record<string, string> = {
   chat: '#00e5ff',
   embedding: '#d946ef',
   completion: '#ffb347',
   multimodal: '#22d97a',
+}
+
+const TYPE_ICON: Record<string, string> = {
+  chat: '◌',
+  embedding: '◉',
+  completion: '◧',
+  multimodal: '◬',
 }
 
 const STATUS_BADGE: Record<string, string> = {
@@ -37,6 +53,26 @@ export function ModelsCatalog() {
     return 0
   })
 
+  // SearchFilters configuration
+  const filterConfigs = [
+    { key: 'search', type: 'search' as const, placeholder: 'Search models...' },
+    { key: 'provider', type: 'select' as const, label: 'Provider', options: [{ value: 'all', label: 'All Providers' }, ...MODEL_PROVIDERS.map(p => ({ value: p.id, label: p.name }))] },
+    { key: 'type', type: 'select' as const, label: 'Type', options: [
+      { value: 'all', label: 'All Types' },
+      { value: 'chat', label: 'Chat' },
+      { value: 'embedding', label: 'Embedding' },
+      { value: 'completion', label: 'Completion' },
+      { value: 'multimodal', label: 'Multimodal' },
+    ]},
+    { key: 'status', type: 'select' as const, label: 'Status', options: [
+      { value: 'all', label: 'All Status' },
+      { value: 'available', label: 'Available' },
+      { value: 'busy', label: 'Busy' },
+      { value: 'unavailable', label: 'Unavailable' },
+      { value: 'deprecated', label: 'Deprecated' },
+    ]},
+  ]
+
   return (
     <div className="page-body">
       <div className="status-pills" style={{ paddingLeft: 0, paddingRight: 0 }}>
@@ -46,49 +82,25 @@ export function ModelsCatalog() {
         <span className="badge badge-gray"><span className="mono">view: {view}</span></span>
       </div>
 
-      <div className="row" style={{ marginBottom: 16, gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#141830', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 8, padding: '8px 12px', flex: 1, minWidth: 240 }}>
-          <span style={{ color: '#6b7494', fontSize: 14 }}>⌕</span>
-          <input
-            value={filter.search}
-            onChange={(e) => setFilter({ search: e.target.value })}
-            placeholder="Search models..."
-            style={{ flex: 1, background: 'transparent', fontSize: 13, color: '#e8eaf6', border: 'none', outline: 'none' }}
-          />
-          <span style={{ fontSize: 10, color: '#4a5170' }} className="mono">⌘F</span>
-        </div>
-
-        <select value={filter.provider} onChange={(e) => setFilter({ provider: e.target.value })} className="field-input" style={{ width: 'auto', minWidth: 160, padding: '6px 12px', fontSize: 12 }}>
-          <option value="all">All Providers</option>
-          {MODEL_PROVIDERS.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select>
-
-        <select value={filter.type} onChange={(e) => setFilter({ type: e.target.value })} className="field-input" style={{ width: 'auto', minWidth: 140, padding: '6px 12px', fontSize: 12 }}>
-          <option value="all">All Types</option>
-          <option value="chat">Chat</option>
-          <option value="embedding">Embedding</option>
-          <option value="completion">Completion</option>
-          <option value="multimodal">Multimodal</option>
-        </select>
-
-        <select value={filter.status} onChange={(e) => setFilter({ status: e.target.value })} className="field-input" style={{ width: 'auto', minWidth: 140, padding: '6px 12px', fontSize: 12 }}>
-          <option value="all">All Status</option>
-          <option value="available">Available</option>
-          <option value="busy">Busy</option>
-          <option value="unavailable">Unavailable</option>
-          <option value="deprecated">Deprecated</option>
-        </select>
-
-        <div className="row" style={{ gap: 4 }}>
-          <button className={'ws-tab ' + (view === 'grid' ? 'active' : '')} onClick={() => setView('grid')} style={{ padding: '6px 10px' }}><span style={{ fontSize: 14 }}>⊞</span></button>
-          <button className={'ws-tab ' + (view === 'list' ? 'active' : '')} onClick={() => setView('list')} style={{ padding: '6px 10px' }}><span style={{ fontSize: 14 }}>☰</span></button>
-        </div>
-      </div>
+      <SearchFilters
+        filters={filterConfigs}
+        values={filter}
+        onChange={setFilter}
+        onSearchChange={(value) => setFilter({ search: value })}
+        viewMode={view}
+        onViewModeChange={setView}
+      />
 
       {view === 'grid' ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 12 }}>
           {sortedModels.map((model) => (
-            <ModelCard key={model.id} model={model} isSelected={selectedModel?.id === model.id} onClick={() => setSelectedModel(model)} />
+            <ModelCard
+              key={model.id}
+              model={model}
+              isSelected={selectedModel?.id === model.id}
+              onClick={() => setSelectedModel(model)}
+              onTest={() => {}}
+            />
           ))}
         </div>
       ) : (
@@ -106,7 +118,7 @@ export function ModelsCatalog() {
               <div key={model.id} className="table-row" style={{ cursor: 'pointer', background: selectedModel?.id === model.id ? 'rgba(217, 70, 239, 0.08)' : 'transparent' }} onClick={() => setSelectedModel(model)}>
                 <span style={{ fontSize: 13, fontWeight: 500, color: '#e8eaf6', minWidth: 200 }}>{model.name}</span>
                 <span className="badge badge-purple" style={{ minWidth: 100 }}>{model.provider}</span>
-                <span style={{ minWidth: 100 }}><span className="badge" style={{ background: `${TYPE_COLOR[model.type]}22`, color: TYPE_COLOR[model.type] }}>{model.type}</span></span>
+                <span style={{ minWidth: 100 }}><ModelCapabilityBadge capability={model.type} size="sm" variant="outline" /></span>
                 <span style={{ minWidth: 100 }}><span className={'badge badge-' + STATUS_BADGE[model.status]}>{model.status}</span></span>
                 <span style={{ minWidth: 100, fontSize: 11, color: '#9ba4c0', fontFamily: 'JetBrains Mono, monospace' }}>{model.usage.requests.toLocaleString()} req</span>
                 <span style={{ fontSize: 11, color: '#6b7494', fontFamily: 'JetBrains Mono, monospace' }}>{model.contextWindow.toLocaleString()} tokens</span>
@@ -116,105 +128,59 @@ export function ModelsCatalog() {
         </div>
       )}
 
-      {selectedModel && <ModelDetailDrawer model={selectedModel} onClose={() => setSelectedModel(null)} />}
-    </div>
-  )
-}
+      {selectedModel && (
+        <DetailDrawer
+          isOpen={!!selectedModel}
+          onClose={() => setSelectedModel(null)}
+          title={selectedModel.name}
+          subtitle={<ProviderBadge provider={{ id: selectedModel.providerId, name: selectedModel.provider, icon: TYPE_ICON[selectedModel.type] || '◌', iconColor: TYPE_COLOR[selectedModel.type], status: selectedModel.status === 'available' ? 'connected' : 'disconnected', modelsCount: 1 }} variant="compact" size="sm" showStatus={false} showModelCount={false} />}
+          size="lg"
+          headerIcon={TYPE_ICON[selectedModel.type]}
+        >
+          <div>
+            <div className="grid2" style={{ marginBottom: 16 }}>
+              <div><div className="stat-label">PROVIDER</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6' }}>{selectedModel.provider}</div></div>
+              <div><div className="stat-label">STATUS</div><span className={'badge badge-' + STATUS_BADGE[selectedModel.status]}>{selectedModel.status}</span></div>
+              <div><div className="stat-label">CONTEXT WINDOW</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{selectedModel.contextWindow.toLocaleString()} tokens</div></div>
+              <div><div className="stat-label">MAX OUTPUT</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{selectedModel.maxOutput} tokens</div></div>
+              <div><div className="stat-label">TOTAL REQUESTS</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{selectedModel.usage.requests.toLocaleString()}</div></div>
+              <div><div className="stat-label">TOTAL TOKENS</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{(selectedModel.usage.tokens / 1e6).toFixed(1)}M</div></div>
+              <div><div className="stat-label">TOTAL COST</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6' }}>{selectedModel.usage.cost}</div></div>
+              <div><div className="stat-label">LAST USED</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6' }}>{selectedModel.lastUsed}</div></div>
+            </div>
 
-function ModelCard({ model, isSelected, onClick }: { model: any; isSelected: boolean; onClick: () => void }) {
-  return (
-    <div
-      className={'panel ' + (isSelected ? 'selected' : '')}
-      style={{ cursor: 'pointer', borderLeft: `3px solid ${TYPE_COLOR[model.type]}`, transition: 'all 0.15s' }}
-      onClick={onClick}
-    >
-      <div className="row" style={{ marginBottom: 12 }}>
-        <span style={{ fontSize: 20, color: TYPE_COLOR[model.type], fontFamily: 'Space Grotesk, sans-serif' }}>{TYPE_COLOR[model.type] === '#00e5ff' ? '◌' : TYPE_COLOR[model.type] === '#d946ef' ? '◉' : TYPE_COLOR[model.type] === '#ffb347' ? '◧' : '◬'}</span>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: '#e8eaf6', fontFamily: 'Space Grotesk, sans-serif' }}>{model.name}</div>
-          <span className="badge badge-purple" style={{ fontSize: 9.5 }}>{model.provider}</span>
-        </div>
-        <span className={'badge badge-' + STATUS_BADGE[model.status]} style={{ fontSize: 9.5 }}>{model.status}</span>
-      </div>
+            <div className="section-label"><span className="ico">◉</span> CAPABILITIES</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
+              {selectedModel.capabilities.map((cap: string) => (
+                <ModelCapabilityBadge key={cap} capability={cap as any} size="sm" />
+              ))}
+            </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 12 }}>
-        {model.tags.slice(0, 4).map((tag: string) => (
-          <span key={tag} className="collab-chip" style={{ fontSize: 9.5 }}>{tag}</span>
-        ))}
-        {model.tags.length > 4 && <span className="collab-chip" style={{ fontSize: 9.5 }}>+{model.tags.length - 4}</span>}
-      </div>
+            <div className="section-label"><span className="ico">⌘</span> TAGS</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
+              {selectedModel.tags.map((tag: string) => (
+                <span key={tag} className="collab-chip">#{tag}</span>
+              ))}
+            </div>
 
-      <div className="row" style={{ fontSize: 10.5, color: '#6b7494', gap: 16 }}>
-        <span className="mono">ctx: {model.contextWindow.toLocaleString()}</span>
-        <span className="mono">out: {model.maxOutput}</span>
-        <span className="mono">{model.usage.cost}</span>
-        <span className="mono">{model.lastUsed}</span>
-      </div>
+            {selectedModel.pricing && (
+              <>
+                <div className="section-label"><span className="ico">$</span> PRICING</div>
+                <div className="grid2" style={{ marginBottom: 16 }}>
+                  <div className="panel-sm"><div className="stat-label">INPUT</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{selectedModel.pricing.input}</div></div>
+                  <div className="panel-sm"><div className="stat-label">OUTPUT</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{selectedModel.pricing.output}</div></div>
+                </div>
+              </>
+            )}
 
-      {model.pricing && (
-        <div style={{ marginTop: 8, fontSize: 10, color: '#9ba4c0', fontFamily: 'JetBrains Mono, monospace' }}>
-          {model.pricing.input} in · {model.pricing.output} out
-        </div>
+            <div className="row" style={{ gap: 8, marginTop: 24 }}>
+              <button className="btn-primary" onClick={() => setSelectedModel(null)}>Close</button>
+              <button className="btn-secondary">Test Model</button>
+              <button className="btn-secondary">View Endpoints</button>
+            </div>
+          </div>
+        </DetailDrawer>
       )}
     </div>
-  )
-}
-
-function ModelDetailDrawer({ model, onClose }: { model: any; onClose: () => void }) {
-  return (
-    <>
-      <div className="drawer-overlay" onClick={onClose} />
-      <div className="drawer" onClick={(e) => e.stopPropagation()}>
-        <div className="drawer-header">
-          <div>
-            <div style={{ fontSize: 12, color: TYPE_COLOR[model.type], fontFamily: 'Space Grotesk, sans-serif', marginBottom: 4 }}>{TYPE_COLOR[model.type] === '#00e5ff' ? '◌' : TYPE_COLOR[model.type] === '#d946ef' ? '◉' : TYPE_COLOR[model.type] === '#ffb347' ? '◧' : '◬'} {model.type.toUpperCase()}</div>
-            <h2>{model.name}</h2>
-          </div>
-          <button className="drawer-close" onClick={onClose}>✕</button>
-        </div>
-        <div className="drawer-body">
-        <div className="grid2" style={{ marginBottom: 16 }}>
-          <div><div className="stat-label">PROVIDER</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6' }}>{model.provider}</div></div>
-          <div><div className="stat-label">STATUS</div><span className={'badge badge-' + STATUS_BADGE[model.status]}>{model.status}</span></div>
-          <div><div className="stat-label">CONTEXT WINDOW</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{model.contextWindow.toLocaleString()} tokens</div></div>
-          <div><div className="stat-label">MAX OUTPUT</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{model.maxOutput} tokens</div></div>
-          <div><div className="stat-label">TOTAL REQUESTS</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{model.usage.requests.toLocaleString()}</div></div>
-          <div><div className="stat-label">TOTAL TOKENS</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{(model.usage.tokens / 1e6).toFixed(1)}M</div></div>
-          <div><div className="stat-label">TOTAL COST</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6' }}>{model.usage.cost}</div></div>
-          <div><div className="stat-label">LAST USED</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6' }}>{model.lastUsed}</div></div>
-        </div>
-
-        <div className="section-label"><span className="ico">◉</span> CAPABILITIES</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
-          {model.capabilities.map((cap: string) => (
-            <span key={cap} className="badge badge-cyan" style={{ fontSize: 10 }}>{cap}</span>
-          ))}
-        </div>
-
-        <div className="section-label"><span className="ico">⌘</span> TAGS</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
-          {model.tags.map((tag: string) => (
-            <span key={tag} className="collab-chip">#{tag}</span>
-          ))}
-        </div>
-
-        {model.pricing && (
-          <>
-            <div className="section-label"><span className="ico">$</span> PRICING</div>
-            <div className="grid2" style={{ marginBottom: 16 }}>
-              <div className="panel-sm"><div className="stat-label">INPUT</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{model.pricing.input}</div></div>
-              <div className="panel-sm"><div className="stat-label">OUTPUT</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{model.pricing.output}</div></div>
-            </div>
-          </>
-        )}
-
-        <div className="row" style={{ gap: 8, marginTop: 24 }}>
-          <button className="btn-primary" onClick={onClose}>Close</button>
-          <button className="btn-secondary">Test Model</button>
-          <button className="btn-secondary">View Endpoints</button>
-        </div>
-      </div>
-    </div>
-    </>
   )
 }
