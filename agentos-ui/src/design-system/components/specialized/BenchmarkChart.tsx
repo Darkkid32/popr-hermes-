@@ -53,7 +53,6 @@ interface BenchmarkChartProps {
   metrics: string[]
   type: BenchmarkChartType
   maxModels?: number
-  onModelSelect?: (model: BenchmarkData) => void
   showLegend?: boolean
   height?: number
 }
@@ -100,7 +99,11 @@ export function BenchmarkChart({
         const angle = (i / metrics.length) * Math.PI * 2 - Math.PI / 2
         const x = centerX + Math.cos(angle) * (radius * r / 4)
         const y = centerY + Math.sin(angle) * (radius * r / 4)
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+        if (i === 0) {
+          ctx.moveTo(x, y)
+        } else {
+          ctx.lineTo(x, y)
+        }
       })
       ctx.closePath()
       ctx.strokeStyle = 'rgba(255,255,255,0.06)'
@@ -117,7 +120,11 @@ export function BenchmarkChart({
         const angle = (i / metrics.length) * Math.PI * 2 - Math.PI / 2
         const x = centerX + Math.cos(angle) * radius * value
         const y = centerY + Math.sin(angle) * radius * value
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+        if (i === 0) {
+          ctx.moveTo(x, y)
+        } else {
+          ctx.lineTo(x, y)
+        }
       })
       ctx.closePath()
       ctx.fillStyle = color + '33'
@@ -140,7 +147,7 @@ export function BenchmarkChart({
         ctx.fillText(model.modelName, 28, y + 9)
       })
     }
-  }, [models, metrics])
+  }, [models, metrics, showLegend])
 
   const drawBar = useCallback((ctx: CanvasRenderingContext2D, W: number, H: number) => {
     ctx.clearRect(0, 0, W, H)
@@ -202,7 +209,11 @@ export function BenchmarkChart({
       const normalized = max === min ? 0.5 : (value - min) / (max - min)
       const x = (i / (models.length - 1)) * (W - 40) + 20
       const y = H - normalized * (H - 60) - 30
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+      if (i === 0) {
+        ctx.moveTo(x, y)
+      } else {
+        ctx.lineTo(x, y)
+      }
     })
 
     const color = PROVIDER_COLORS[models[0]?.provider] || PROVIDER_COLORS.Default

@@ -32,34 +32,42 @@ export function ModelsOverview() {
   const totalCost = MODEL_USAGE_HISTORY[MODEL_USAGE_HISTORY.length - 1]?.cost ?? 0
 
   const drawUsageChart = useCallback((ctx: CanvasRenderingContext2D, W: number, H: number) => {
-    ctx.clearRect(0, 0, W, H)
-    const data = MODEL_USAGE_HISTORY.slice(-7)
-    const maxCost = Math.max(...data.map((d) => d.cost))
-    const maxRequests = Math.max(...data.map((d) => d.requests))
+      ctx.clearRect(0, 0, W, H)
+      const data = MODEL_USAGE_HISTORY.slice(-7)
+      const maxCost = Math.max(...data.map((d) => d.cost))
+      const maxRequests = Math.max(...data.map((d) => d.requests))
 
-    // Cost line
-    ctx.beginPath()
-    data.forEach((d, i) => {
-      const x = (i / (data.length - 1)) * W
-      const y = H - (d.cost / maxCost) * (H - 40) - 20
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
-    })
-    ctx.strokeStyle = '#d946ef'
-    ctx.lineWidth = 2
-    ctx.stroke()
+      // Cost line
+      ctx.beginPath()
+      data.forEach((d, i) => {
+        const x = (i / (data.length - 1)) * W
+        const y = H - (d.cost / maxCost) * (H - 40) - 20
+        if (i === 0) {
+          ctx.moveTo(x, y)
+        } else {
+          ctx.lineTo(x, y)
+        }
+      })
+      ctx.strokeStyle = '#d946ef'
+      ctx.lineWidth = 2
+      ctx.stroke()
 
-    // Requests line (secondary axis)
-    ctx.beginPath()
-    data.forEach((d, i) => {
-      const x = (i / (data.length - 1)) * W
-      const y = H - (d.requests / maxRequests) * (H - 40) - 20
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
-    })
-    ctx.strokeStyle = '#00e5ff'
-    ctx.lineWidth = 1.5
-    ctx.setLineDash([4, 4])
-    ctx.stroke()
-    ctx.setLineDash([])
+      // Requests line (secondary axis)
+      ctx.beginPath()
+      data.forEach((d, i) => {
+        const x = (i / (data.length - 1)) * W
+        const y = H - (d.requests / maxRequests) * (H - 40) - 20
+        if (i === 0) {
+          ctx.moveTo(x, y)
+        } else {
+          ctx.lineTo(x, y)
+        }
+      })
+      ctx.strokeStyle = '#00e5ff'
+      ctx.lineWidth = 1.5
+      ctx.setLineDash([4, 4])
+      ctx.stroke()
+      ctx.setLineDash([])
 
     // Labels
     data.forEach((d, i) => {

@@ -83,7 +83,7 @@ export function DetailDrawer({
       document.addEventListener('keydown', handleKeyDown)
     }
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, closeOnEscape])
+  }, [isOpen, closeOnEscape, onClose])
 
   if (!isOpen) return null
 
