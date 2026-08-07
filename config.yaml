@@ -4,6 +4,10 @@ platforms:
     extra:
       bot_token: "${DISCORD_BOT_TOKEN}"
       application_id: "${DISCORD_APPLICATION_ID}"
+  telegram:
+    enabled: true
+    extra:
+      bot_token: "${TELEGRAM_BOT_TOKEN}"
   whatsapp:
     enabled: true
     extra:

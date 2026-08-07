@@ -1,13 +1,10 @@
-import type { SettingRow } from '../lib/demo-data'
+// MCP Settings - Migrated to use shared AI components
+// Source: Google Stitch Project 10866743485103090405
+// Design System: Hermes AI OS
 
-const TONE_COLOR: Record<string, string> = {
-  cyan: '#00e5ff',
-  green: '#22d97a',
-  purple: '#7c6cf5',
-  pink: '#d946ef',
-  dim: '#9ba4c0',
-  default: '#e8eaf6',
-}
+import { SettingsSection, type SettingRow } from '../design-system/components/specialized/SettingsSection'
+import { Card } from '../design-system/components/data-display/Card'
+import { Badge } from '../design-system/components/data-display/Badge'
 
 export function MCPSettings() {
   const MCP_GENERAL_SETTINGS: SettingRow[] = [
@@ -39,66 +36,78 @@ export function MCPSettings() {
     { label: 'Developer Mode', value: 'Disabled', tone: 'amber' },
     { label: 'Debug Logging', value: 'Disabled', tone: 'amber' },
     { label: 'Mock Server Mode', value: 'Disabled', tone: 'amber' },
-    { label: 'Local Server Path', value: '~/mcp-servers/dev', tone: 'dim' },
-    { label: 'Hot Reload Config', value: 'Enabled', tone: 'green' },
+  ]
+
+  const MCP_ENV_VARS: SettingRow[] = [
+    { label: 'MCP_LOG_LEVEL', value: 'info', tone: 'cyan' },
+    { label: 'MCP_MAX_PAYLOAD', value: '10 MB', tone: 'dim' },
+    { label: 'MCP_DEFAULT_TIMEOUT', value: '30000 ms', tone: 'dim' },
+    { label: 'MCP_AUTH_MODE', value: 'token', tone: 'cyan' },
   ]
 
   return (
     <div className="page-body">
-      <div className="status-pills" style={{ paddingLeft: 0, paddingRight: 0 }}>
-        <span className="badge badge-green"><span className="dot dot-green" /> 6 connected</span>
-        <span className="badge badge-cyan"><span className="mono">21 tools available</span></span>
-        <span className="badge badge-purple"><span className="mono">8 servers</span></span>
-        <span className="badge badge-gray"><span className="mono">99.8% uptime</span></span>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-3)', marginBottom: 'var(--spacing-4)' }}>
+        <Badge variant="success" size="md" dot>registry on</Badge>
+        <Badge variant="info" size="md" dot>10 max connections</Badge>
+        <Badge variant="warning" size="md" dot>strict TLS</Badge>
+        <Badge variant="default" size="md" dot>token auth</Badge>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-        <SettingsPanel rows={MCP_GENERAL_SETTINGS} title="General" icon="◰" />
-        <SettingsPanel rows={MCP_TRANSPORT_SETTINGS} title="Transports" icon="🔌" />
-      </div>
+      <SettingsSection
+        title="General"
+        icon="⚙"
+        rows={MCP_GENERAL_SETTINGS}
+        columns={2}
+      />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-        <SettingsPanel rows={MCP_SECURITY_SETTINGS} title="Security" icon="⚠" />
-        <SettingsPanel rows={MCP_DEVELOPMENT_SETTINGS} title="Development" icon="⌘" />
-      </div>
+      <SettingsSection
+        title="Transport"
+        icon="📡"
+        rows={MCP_TRANSPORT_SETTINGS}
+        columns={2}
+      />
 
-      <div className="panel" style={{ marginTop: 12 }}>
-        <div className="section-label"><span className="ico">⚙</span> ENVIRONMENT</div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-          <Env label="MCP_REGISTRY_ENABLED" value="true" tone="green" />
-          <Env label="MCP_WS_URL" value="ws://localhost:8765/mcp" tone="cyan" />
-          <Env label="MCP_SSE_URL" value="https://api.github.com/mcp" tone="dim" />
-          <Env label="MCP_DEV_MODE" value="false" tone="amber" />
-          <Env label="MCP_MAX_CONNECTIONS" value="10" tone="dim" />
-          <Env label="MCP_TIMEOUT_MS" value="30000" tone="dim" />
+      <SettingsSection
+        title="Security"
+        icon="🔒"
+        rows={MCP_SECURITY_SETTINGS}
+        columns={2}
+      />
+
+      <SettingsSection
+        title="Development"
+        icon="🛠"
+        rows={MCP_DEVELOPMENT_SETTINGS}
+        columns={2}
+      />
+
+      <SettingsSection
+        title="Environment Variables"
+        icon="⌘"
+        rows={MCP_ENV_VARS}
+        columns={2}
+      />
+
+      <Card variant="outlined" style={{ padding: 'var(--spacing-4)', marginTop: 'var(--spacing-4)' }}>
+        <div style={{ fontSize: 'var(--text-label-sm)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-3)' }}>
+          MCP PROTOCOL INFO
         </div>
-      </div>
-    </div>
-  )
-}
-
-function SettingsPanel({ rows, title, icon }: { rows: SettingRow[]; title: string; icon: string }) {
-  return (
-    <div className="panel">
-      <div className="section-label"><span className="ico">{icon}</span> {title.toUpperCase()}</div>
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {rows.map((row, i) => (
-          <div key={i} className="table-row">
-            <span style={{ fontSize: 13, color: '#e8eaf6', flex: 1 }}>{row.label}</span>
-            <span style={{ fontSize: 12.5, color: TONE_COLOR[row.tone] ?? '#e8eaf6', fontWeight: row.tone === 'cyan' || row.tone === 'green' ? 600 : 400, fontFamily: row.tone === 'cyan' || row.tone === 'green' ? 'JetBrains Mono, monospace' : 'inherit' }}>{row.value}</span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--spacing-3)' }}>
+          <div className="panel-sm">
+            <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>PROTOCOL VERSION</div>
+            <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>2025-06-18</div>
           </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function Env({ label, value, tone }: { label: string; value: string; tone: 'green' | 'red' | 'cyan' | 'dim' | 'amber' }) {
-  const color = tone === 'green' ? '#22d97a' : tone === 'red' ? '#ff4d6d' : tone === 'cyan' ? '#00e5ff' : tone === 'dim' ? '#9ba4c0' : '#ffb347'
-  return (
-    <div className="panel-sm">
-      <div style={{ fontSize: 10, color: '#6b7494', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 4, fontWeight: 600 }} className="mono">{label}</div>
-      <div style={{ fontSize: 12.5, color, fontFamily: 'JetBrains Mono, monospace' }}>{value}</div>
+          <div className="panel-sm">
+            <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>CLIENT</div>
+            <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>@modelcontextprotocol/sdk</div>
+          </div>
+          <div className="panel-sm">
+            <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>SUPPORTED TRANSPORTS</div>
+            <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>stdio · sse · websocket</div>
+          </div>
+        </div>
+      </Card>
     </div>
   )
 }

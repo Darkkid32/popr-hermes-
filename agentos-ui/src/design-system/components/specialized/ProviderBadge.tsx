@@ -18,7 +18,7 @@ export interface Provider {
 // Simple provider config for basic usage
 export interface SimpleProvider {
   name: string
-  status: 'connected' | 'disconnected' | 'degraded' | 'syncing' | 'error'
+  status: 'connected' | 'disconnected' | 'degraded' | 'syncing' | 'error' | 'connecting'
   icon?: string
   iconColor?: string
   modelsCount?: number
@@ -33,6 +33,7 @@ const STATUS_COLORS = {
   degraded: { bg: 'var(--color-warning-base)/15', text: 'var(--color-warning-base)', dot: 'var(--color-warning-base)' },
   syncing: { bg: 'var(--color-warning-base)/15', text: 'var(--color-warning-base)', dot: 'var(--color-warning-base)' },
   error: { bg: 'var(--color-error-base)/15', text: 'var(--color-error-base)', dot: 'var(--color-error-base)' },
+  connecting: { bg: 'var(--color-info-base)/15', text: 'var(--color-info-base)', dot: 'var(--color-info-base)' },
 }
 
 interface ProviderBadgeProps {

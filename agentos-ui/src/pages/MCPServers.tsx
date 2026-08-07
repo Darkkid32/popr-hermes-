@@ -1,21 +1,33 @@
+// MCP Servers - Migrated to use shared AI components
+// Source: Google Stitch Project 10866743485103090405
+// Design System: Hermes AI OS
+
 import { useState } from 'react'
 import { MCP_SERVERS } from '../lib/mcp-data'
 import { useMCPStore } from '../stores/MCPStore'
+import { MCPServerCard } from '../design-system/components/specialized/MCPServerCard'
+import { DetailDrawer } from '../design-system/components/specialized/DetailDrawer'
+import { SearchFilters } from '../design-system/components/specialized/SearchFilters'
+import { Card } from '../design-system/components/data-display/Card'
+import { Badge } from '../design-system/components/data-display/Badge'
+import { Button } from '../design-system/components/data-display/Button'
+import { Table } from '../design-system/components/data-display/Table'
+import { ProviderBadge } from '../design-system/components/specialized/ProviderBadge'
 
-const STATUS_BADGE: Record<string, string> = {
-  connected: 'green',
-  disconnected: 'gray',
-  connecting: 'amber',
-  error: 'red',
+const STATUS_BADGE: Record<string, 'success' | 'warning' | 'error' | 'default'> = {
+  connected: 'success',
+  disconnected: 'error',
+  connecting: 'warning',
+  error: 'error',
 }
 
-const CATEGORY_BADGE: Record<string, string> = {
-  filesystem: 'purple',
-  database: 'cyan',
-  api: 'green',
-  tool: 'amber',
-  integration: 'pink',
-  custom: 'purple',
+const CATEGORY_BADGE: Record<string, 'default' | 'info' | 'success' | 'warning' | 'error'> = {
+  filesystem: 'default',
+  database: 'info',
+  api: 'success',
+  tool: 'warning',
+  integration: 'error',
+  custom: 'default',
 }
 
 const TRANSPORT_ICON: Record<string, string> = {
@@ -25,7 +37,7 @@ const TRANSPORT_ICON: Record<string, string> = {
 }
 
 export function MCPServers() {
-  const { view, setView, filter, setFilter, selectedServer, setSelectedServer } = useMCPStore()
+  const { view, setView, filter, setFilter, selectedServer, setSelectedServer, toggleServer } = useMCPStore()
   const [sortBy, setSortBy] = useState<'name' | 'category' | 'status' | 'version' | 'requests' | 'latency'>('name')
 
   const allCategories = [...new Set(MCP_SERVERS.map((s) => s.category))].sort()
@@ -49,235 +61,220 @@ export function MCPServers() {
 
   return (
     <div className="page-body">
-      <div className="status-pills" style={{ paddingLeft: 0, paddingRight: 0 }}>
-        <span className="badge badge-green"><span className="dot dot-green" /> {MCP_SERVERS.filter((s) => s.status === 'connected').length} connected</span>
-        <span className="badge badge-cyan"><span className="mono">{filteredServers.length} filtered</span></span>
-        <span className="badge badge-purple"><span className="mono">{allCategories.length} categories</span></span>
-        <span className="badge badge-gray"><span className="mono">view: {view}</span></span>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-3)', marginBottom: 'var(--spacing-4)' }}>
+        <Badge variant="success" size="md" dot>{MCP_SERVERS.filter((s) => s.status === 'connected').length} connected</Badge>
+        <Badge variant="error" size="md" dot>{MCP_SERVERS.filter((s) => s.status === 'error').length} errors</Badge>
+        <Badge variant="info" size="md" dot>{MCP_SERVERS.length} servers</Badge>
+        <Badge variant="primary" size="md" dot>{filteredServers.length} filtered</Badge>
       </div>
 
-      <div className="row" style={{ marginBottom: 16, gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#141830', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 8, padding: '8px 12px', flex: 1, minWidth: 240 }}>
-          <span style={{ color: '#6b7494', fontSize: 14 }}>⌕</span>
-          <input
-            value={filter.search}
-            onChange={(e) => setFilter({ search: e.target.value })}
-            placeholder="Search servers..."
-            style={{ flex: 1, background: 'transparent', fontSize: 13, color: '#e8eaf6', border: 'none', outline: 'none' }}
-          />
-          <span style={{ fontSize: 10, color: '#4a5170' }} className="mono">⌘F</span>
-        </div>
+      <SearchFilters
+        searchPlaceholder="Search servers..."
+        onSearchChange={(value) => setFilter({ search: value })}
+        filters={[
+          {
+            key: 'category',
+            label: 'Category',
+            type: 'select',
+            options: [
+              { value: 'all', label: 'All Categories' },
+              ...allCategories.map((c) => ({ value: c, label: c })),
+            ],
+          },
+          {
+            key: 'status',
+            label: 'Status',
+            type: 'select',
+            options: [
+              { value: 'all', label: 'All Statuses' },
+              { value: 'connected', label: 'Connected' },
+              { value: 'disconnected', label: 'Disconnected' },
+              { value: 'connecting', label: 'Connecting' },
+              { value: 'error', label: 'Error' },
+            ],
+          },
+        ]}
+        values={filter}
+        onChange={(values) => setFilter(values)}
+        viewMode={view}
+        onViewModeChange={setView}
+      />
 
-        <select value={filter.category} onChange={(e) => setFilter({ category: e.target.value })} className="field-input" style={{ width: 'auto', minWidth: 160, padding: '6px 12px', fontSize: 12 }}>
-          <option value="all">All Categories</option>
-          {allCategories.map((c) => <option key={c} value={c}>{c}</option>)}
-        </select>
-
-        <select value={filter.status} onChange={(e) => setFilter({ status: e.target.value })} className="field-input" style={{ width: 'auto', minWidth: 140, padding: '6px 12px', fontSize: 12 }}>
-          <option value="all">All Status</option>
-          <option value="connected">Connected</option>
-          <option value="disconnected">Disconnected</option>
-          <option value="connecting">Connecting</option>
-          <option value="error">Error</option>
-        </select>
-
-        <div className="row" style={{ gap: 4 }}>
-          <button className={'ws-tab ' + (view === 'grid' ? 'active' : '')} onClick={() => setView('grid')} style={{ padding: '6px 10px' }}><span style={{ fontSize: 14 }}>⊞</span></button>
-          <button className={'ws-tab ' + (view === 'list' ? 'active' : '')} onClick={() => setView('list')} style={{ padding: '6px 10px' }}><span style={{ fontSize: 14 }}>☰</span></button>
-        </div>
+      <div style={{ display: 'flex', gap: 'var(--spacing-2)', marginBottom: 'var(--spacing-3)', alignItems: 'center' }}>
+        <span style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-tertiary)' }}>
+          SORT BY
+        </span>
+        {(['name', 'category', 'status', 'requests', 'latency'] as const).map((key) => (
+          <Button key={key} variant={sortBy === key ? 'primary' : 'tertiary'} size="sm" onClick={() => setSortBy(key)}>
+            {key.charAt(0).toUpperCase() + key.slice(1)}
+          </Button>
+        ))}
       </div>
 
       {view === 'grid' ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 12 }}>
-          {sortedServers.map((server) => (
-            <ServerCard key={server.id} server={server} isSelected={selectedServer?.id === server.id} onClick={() => setSelectedServer(server)} />
-          ))}
-        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 'var(--spacing-3)' }}>
+                  {sortedServers.map((server) => (
+                    <MCPServerCard
+                      key={server.id}
+                      server={server}
+                      variant="default"
+                      onClick={() => setSelectedServer(server)}
+                      onExploreTools={() => { setSelectedServer(server); }}
+                      onConnect={() => toggleServer(server.id)}
+                      onDisconnect={() => toggleServer(server.id)}
+                      onConfigure={() => setSelectedServer(server)}
+                      onRemove={() => console.log('Remove:', server.id)}
+                    />
+                  ))}
+                </div>
       ) : (
-        <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
-          <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', gap: 12, fontSize: 9.5, color: '#6b7494', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 600 }} className="mono">
-            <span style={{ minWidth: 200, cursor: 'pointer' }} onClick={() => setSortBy('name')}>NAME</span>
-            <span style={{ minWidth: 100, cursor: 'pointer' }} onClick={() => setSortBy('category')}>CATEGORY</span>
-            <span style={{ minWidth: 100, cursor: 'pointer' }} onClick={() => setSortBy('status')}>STATUS</span>
-            <span style={{ minWidth: 80, cursor: 'pointer' }} onClick={() => setSortBy('requests')}>REQUESTS</span>
-            <span style={{ minWidth: 80, cursor: 'pointer' }} onClick={() => setSortBy('latency')}>LATENCY</span>
-            <span style={{ flex: 1 }}>ACTIONS</span>
-          </div>
-          <div style={{ padding: '4px 16px', maxHeight: 600, overflowY: 'auto' }}>
-            {sortedServers.map((server) => (
-              <div key={server.id} className="table-row" style={{ cursor: 'pointer', background: selectedServer?.id === server.id ? 'rgba(217, 70, 239, 0.08)' : 'transparent' }} onClick={() => setSelectedServer(server)}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 200 }}>
-                  <span style={{ fontSize: 18, color: server.iconColor }}>{server.icon}</span>
-                  <span style={{ fontSize: 13, fontWeight: 500, color: '#e8eaf6' }}>{server.name}</span>
+        <Card variant="outlined" style={{ overflow: 'hidden' }}>
+          <Table
+            columns={[
+              { key: 'name', header: 'SERVER', sortable: true, width: 220, render: (s: any) => (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)' }}>
+                  <span style={{ fontSize: 'var(--text-display-sm)', color: s.iconColor }}>{s.icon}</span>
+                  <span style={{ fontSize: 'var(--text-body-sm)', fontWeight: 500, color: 'var(--color-text-primary)' }}>{s.name}</span>
                 </div>
-                <span className={'badge badge-' + CATEGORY_BADGE[server.category]} style={{ minWidth: 100, fontSize: 9.5 }}>{server.category}</span>
-                <span style={{ minWidth: 100 }}><span className={'badge badge-' + STATUS_BADGE[server.status]}>{server.status}</span></span>
-                <span style={{ minWidth: 80, fontSize: 11, color: '#9ba4c0', fontFamily: 'JetBrains Mono, monospace' }}>{server.requestsTotal.toLocaleString()}</span>
-                <span style={{ minWidth: 80, fontSize: 11, color: '#9ba4c0', fontFamily: 'JetBrains Mono, monospace' }}>{server.avgLatency}</span>
-                <div style={{ flex: 1, display: 'flex', gap: 8 }}>
-                  <button className="btn-secondary" style={{ fontSize: 10, padding: '3px 8px' }} onClick={(e) => { e.stopPropagation(); }}>{server.status === 'connected' ? 'Disconnect' : 'Connect'}</button>
-                  <button className="btn-secondary" style={{ fontSize: 10, padding: '3px 8px' }} onClick={(e) => { e.stopPropagation(); }}>Tools</button>
-                  <button className="btn-secondary" style={{ fontSize: 10, padding: '3px 8px' }} onClick={(e) => { e.stopPropagation(); }}>Configure</button>
-                  <button className="btn-secondary" style={{ fontSize: 10, padding: '3px 8px', color: '#ff4d6d', borderColor: '#ff4d6d' }} onClick={(e) => { e.stopPropagation(); }}>Remove</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+              )},
+              { key: 'category', header: 'CATEGORY', sortable: true, width: 120, render: (s: any) => (
+                <Badge variant={CATEGORY_BADGE[s.category] || 'default'} size="sm">{s.category}</Badge>
+              )},
+              { key: 'status', header: 'STATUS', sortable: true, width: 110, render: (s: any) => (
+                <Badge variant={STATUS_BADGE[s.status] || 'default'} size="sm" dot>{s.status}</Badge>
+              )},
+              { key: 'transport', header: 'TRANSPORT', width: 110, render: (s: any) => (
+                <span style={{ fontSize: 'var(--text-body-xs)', fontFamily: 'var(--font-mono)', color: 'var(--color-text-tertiary)', textTransform: 'uppercase' }}>
+                  {TRANSPORT_ICON[s.transport]} {s.transport}
+                </span>
+              )},
+              { key: 'tools', header: 'TOOLS', align: 'right', width: 80, render: (s: any) => (
+                <span style={{ fontSize: 'var(--text-body-xs)', fontFamily: 'var(--font-mono)', color: 'var(--color-text-tertiary)' }}>{s.tools.length}</span>
+              )},
+              { key: 'requests', header: 'REQUESTS', sortable: true, align: 'right', width: 110, render: (s: any) => (
+                <span style={{ fontSize: 'var(--text-body-xs)', fontFamily: 'var(--font-mono)', color: 'var(--color-text-tertiary)' }}>{s.requestsTotal.toLocaleString()}</span>
+              )},
+              { key: 'latency', header: 'LATENCY', sortable: true, align: 'right', width: 90, render: (s: any) => (
+                <span style={{ fontSize: 'var(--text-body-xs)', fontFamily: 'var(--font-mono)', color: 'var(--color-text-tertiary)' }}>{s.avgLatency}ms</span>
+              )},
+              { key: 'version', header: 'VERSION', sortable: true, width: 90, render: (s: any) => (
+                <span style={{ fontSize: 'var(--text-body-xs)', fontFamily: 'var(--font-mono)', color: 'var(--color-text-tertiary)' }}>v{s.version}</span>
+              )},
+            ]}
+            rows={sortedServers}
+            sortColumn={sortBy}
+            sortDirection="asc"
+            onSort={(column: string) => setSortBy(column as any)}
+            selectable={false}
+            emptyMessage="No servers match filters"
+          />
+        </Card>
       )}
 
-      {selectedServer && <ServerDetailDrawer server={selectedServer} onClose={() => setSelectedServer(null)} />}
+      {selectedServer && (
+        <ServerDetailDrawer server={selectedServer} onClose={() => setSelectedServer(null)} onToggle={() => toggleServer(selectedServer.id)} />
+      )}
     </div>
   )
 }
 
-function ServerCard({ server, isSelected, onClick }: { server: any; isSelected: boolean; onClick: () => void }) {
+function ServerDetailDrawer({ server, onClose, onToggle }: { server: any; onClose: () => void; onToggle: () => void }) {
   return (
-    <div
-      className={'panel ' + (isSelected ? 'selected' : '')}
-      style={{ cursor: 'pointer', borderLeft: `3px solid ${server.iconColor}`, transition: 'all 0.15s' }}
-      onClick={onClick}
+    <DetailDrawer
+      isOpen={true}
+      onClose={onClose}
+      title={server.name}
+      size="lg"
+      headerIcon={<ProviderBadge simpleProvider={{ name: server.category, status: server.status, icon: server.icon, iconColor: server.iconColor }} size="sm" />}
+      actions={
+        <div style={{ display: 'flex', gap: 'var(--spacing-2)' }}>
+          <Button variant="secondary" onClick={onToggle}>
+            {server.status === 'connected' ? 'Disconnect' : 'Connect'}
+          </Button>
+          <Button variant="primary" onClick={onClose}>Close</Button>
+        </div>
+      }
     >
-      <div className="row" style={{ marginBottom: 12 }}>
-        <span style={{ fontSize: 22, color: server.iconColor }}>{server.icon}</span>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: '#e8eaf6', fontFamily: 'Space Grotesk, sans-serif' }}>{server.name}</div>
-          <span className={'badge badge-' + CATEGORY_BADGE[server.category]} style={{ fontSize: 9.5 }}>{server.category}</span>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--spacing-3)', marginBottom: 'var(--spacing-4)' }}>
+        <div className="panel-sm">
+          <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>VERSION</div>
+          <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>v{server.version}</div>
         </div>
-        <span className={'badge badge-' + STATUS_BADGE[server.status]} style={{ fontSize: 9.5 }}>{server.status}</span>
+        <div className="panel-sm">
+          <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>AUTHOR</div>
+          <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)' }}>{server.author}</div>
+        </div>
+        <div className="panel-sm">
+          <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>TRANSPORT</div>
+          <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>{TRANSPORT_ICON[server.transport]} {server.transport}</div>
+        </div>
+        <div className="panel-sm">
+          <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>ENDPOINT</div>
+          <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>{server.endpoint}</div>
+        </div>
+        <div className="panel-sm">
+          <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>UPTIME</div>
+          <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>{server.uptime}</div>
+        </div>
+        <div className="panel-sm">
+          <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>LAST CONNECTED</div>
+          <div style={{ fontSize: 'var(--text-body-md)', fontWeight: 500, color: 'var(--color-text-primary)', fontFamily: 'var(--font-mono)' }}>{server.lastConnected}</div>
+        </div>
       </div>
 
-      <div style={{ fontSize: 11, color: '#9ba4c0', marginBottom: 10, lineHeight: 1.5 }}>{server.description}</div>
-
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 10 }}>
-        {server.tags.slice(0, 4).map((tag: string) => (
-          <span key={tag} className="collab-chip" style={{ fontSize: 9.5 }}>{tag}</span>
+      <div style={{ fontSize: 'var(--text-label-sm)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-2)' }}>
+        CAPABILITIES
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-1)', marginBottom: 'var(--spacing-4)' }}>
+        {server.capabilities.map((cap: string) => (
+          <Badge key={cap} variant="default" size="sm">{cap}</Badge>
         ))}
-        {server.tags.length > 4 && <span className="collab-chip" style={{ fontSize: 9.5 }}>+{server.tags.length - 4}</span>}
       </div>
 
-      <div className="row" style={{ fontSize: 10.5, color: '#6b7494', gap: 16 }}>
-        <span className="mono">v{server.version}</span>
-        <span className="mono">{TRANSPORT_ICON[server.transport]} {server.transport.toUpperCase()}</span>
-        <span className="mono">{server.tools.length} tools</span>
-        <span className="mono">{server.resources.length} resources</span>
+      <div style={{ fontSize: 'var(--text-label-sm)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-2)' }}>
+        TOOLS · {server.tools.length}
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-1)', marginBottom: 'var(--spacing-4)' }}>
+        {server.tools.map((tool: any) => (
+          <Badge key={tool.name} variant="info" size="sm" style={{ fontFamily: 'var(--font-mono)' }}>{tool.name}</Badge>
+        ))}
       </div>
 
-      <div className="row" style={{ fontSize: 10.5, color: '#6b7494', gap: 16, marginTop: 4 }}>
-        <span className="mono">{server.requestsTotal.toLocaleString()} req</span>
-        <span className="mono">{(server.requestsSuccess / (server.requestsTotal || 1) * 100).toFixed(1)}% ok</span>
-        <span className="mono">{server.avgLatency}</span>
-        <span className="mono">up: {server.uptime}</span>
+      <div style={{ fontSize: 'var(--text-label-sm)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-2)' }}>
+        RESOURCES · {server.resources.length}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-2)', marginBottom: 'var(--spacing-4)', maxHeight: 200, overflow: 'auto' }}>
+        {server.resources.map((res: any) => (
+          <div key={res.uri} style={{ padding: 'var(--spacing-2)', backgroundColor: 'var(--color-surface-container)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-primary)' }}>
+            <div style={{ fontSize: 'var(--text-body-sm)', fontWeight: 500, color: 'var(--color-text-primary)' }}>{res.name}</div>
+            <div style={{ fontSize: 'var(--text-body-xs)', fontFamily: 'var(--font-mono)', color: 'var(--color-text-tertiary)' }}>{res.uri}</div>
+          </div>
+        ))}
       </div>
 
-      <div className="row" style={{ marginTop: 8, gap: 8 }}>
-        <button className="btn-secondary" style={{ fontSize: 10, padding: '3px 8px', flex: 1 }} onClick={(e) => { e.stopPropagation(); }}>{server.status === 'connected' ? 'Disconnect' : 'Connect'}</button>
-        <button className="btn-primary" style={{ fontSize: 10, padding: '3px 8px' }} onClick={(e) => { e.stopPropagation(); }}>Explore Tools</button>
-        <button className="btn-secondary" style={{ fontSize: 10, padding: '3px 8px' }} onClick={(e) => { e.stopPropagation(); }}>Configure</button>
+      <div style={{ fontSize: 'var(--text-label-sm)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-2)' }}>
+        CONFIGURATION
       </div>
-    </div>
-  )
-}
-
-function ServerDetailDrawer({ server, onClose }: { server: any; onClose: () => void }) {
-  const successRate = server.requestsTotal > 0 ? (server.requestsSuccess / server.requestsTotal * 100).toFixed(1) : '0.0'
-
-  return (
-    <>
-      <div className="drawer-overlay" onClick={onClose} />
-      <div className="drawer" onClick={(e) => e.stopPropagation()}>
-      <div className="drawer-header">
-        <div>
-          <div style={{ fontSize: 12, color: server.iconColor, fontFamily: 'Space Grotesk, sans-serif', marginBottom: 4 }}>{server.icon} {server.category.toUpperCase()}</div>
-          <h2>{server.name}</h2>
-        </div>
-        <button className="drawer-close" onClick={onClose}>✕</button>
-      </div>
-      <div className="drawer-body">
-        <div className="grid2" style={{ marginBottom: 16 }}>
-          <div><div className="stat-label">VERSION</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6' }}>{server.version}</div></div>
-          <div><div className="stat-label">AUTHOR</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6' }}>{server.author}</div></div>
-          <div><div className="stat-label">STATUS</div><span className={'badge badge-' + STATUS_BADGE[server.status]}>{server.status}</span></div>
-          <div><div className="stat-label">CATEGORY</div><span className={'badge badge-' + CATEGORY_BADGE[server.category]}>{server.category}</span></div>
-          <div><div className="stat-label">TRANSPORT</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6' }}>{TRANSPORT_ICON[server.transport]} {server.transport.toUpperCase()}</div></div>
-          <div><div className="stat-label">ENDPOINT</div><div style={{ fontSize: 12, fontWeight: 500, color: '#9ba4c0', fontFamily: 'JetBrains Mono, monospace' }}>{server.endpoint}</div></div>
-          <div><div className="stat-label">INSTALLED</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{server.installDate}</div></div>
-          <div><div className="stat-label">UPDATED</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{server.lastUpdate}</div></div>
-          <div><div className="stat-label">LAST CONNECTED</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6' }}>{server.lastConnected}</div></div>
-          <div><div className="stat-label">UPTIME</div><div style={{ fontSize: 14, fontWeight: 500, color: '#22d97a' }}>{server.uptime}</div></div>
-          <div><div className="stat-label">TOTAL REQUESTS</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{server.requestsTotal.toLocaleString()}</div></div>
-          <div><div className="stat-label">SUCCESS RATE</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6' }}>{successRate}%</div></div>
-          <div><div className="stat-label">AVG LATENCY</div><div style={{ fontSize: 14, fontWeight: 500, color: '#e8eaf6', fontFamily: 'JetBrains Mono, monospace' }}>{server.avgLatency}</div></div>
-        </div>
-
-        <div className="section-label"><span className="ico">⚙</span> CONFIGURATION</div>
-        <div style={{ background: '#0a0d1a', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: 12, fontSize: 10, color: '#9ba4c0', fontFamily: 'JetBrains Mono, monospace', maxHeight: 150, overflowY: 'auto', whiteSpace: 'pre-wrap', marginBottom: 16 }}>
-          {JSON.stringify(server.config, null, 2)}
-        </div>
-
-        <div className="section-label"><span className="ico">✦</span> TOOLS · {server.tools.length}</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
-          {server.tools.map((tool: any) => (
-            <div key={tool.name} className="panel-sm">
-              <div className="row">
-                <span style={{ fontSize: 12, fontWeight: 500, color: '#e8eaf6', minWidth: 160, fontFamily: 'JetBrains Mono, monospace' }}>{tool.name}</span>
-                <span style={{ fontSize: 10.5, color: '#9ba4c0', flex: 1 }}>{tool.description}</span>
-              </div>
-              <div style={{ fontSize: 9, color: '#6b7494', marginTop: 4, fontFamily: 'JetBrains Mono, monospace' }}>
-                schema: {JSON.stringify(tool.inputSchema).slice(0, 100)}...
-              </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--spacing-2)', marginBottom: 'var(--spacing-4)' }}>
+        {Object.entries(server.config).map(([key, value]) => (
+          <div key={key} style={{ padding: 'var(--spacing-2)', backgroundColor: 'var(--color-surface-container)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border-primary)' }}>
+            <div style={{ fontSize: 'var(--text-label-xs)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-tertiary)', marginBottom: 'var(--spacing-1)' }}>
+              {key}
             </div>
-          ))}
-        </div>
-
-        {server.resources.length > 0 && (
-          <>
-            <div className="section-label"><span className="ico">◧</span> RESOURCES · {server.resources.length}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
-              {server.resources.map((resource: any) => (
-                <div key={resource.uri} className="panel-sm">
-                  <div className="row">
-                    <span style={{ fontSize: 12, fontWeight: 500, color: '#e8eaf6', minWidth: 160 }}>{resource.name}</span>
-                    <span style={{ fontSize: 10.5, color: '#9ba4c0', flex: 1 }}>{resource.description}</span>
-                  </div>
-                  <div style={{ fontSize: 9, color: '#6b7494', marginTop: 4, fontFamily: 'JetBrains Mono, monospace' }}>{resource.uri}</div>
-                </div>
-              ))}
+            <div style={{ fontSize: 'var(--text-body-sm)', fontFamily: 'var(--font-mono)', color: 'var(--color-text-secondary)', wordBreak: 'break-all' }}>
+              {String(value)}
             </div>
-          </>
-        )}
-
-        {server.prompts.length > 0 && (
-          <>
-            <div className="section-label"><span className="ico">◉</span> PROMPTS · {server.prompts.length}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
-              {server.prompts.map((prompt: any) => (
-                <div key={prompt.name} className="panel-sm">
-                  <div className="row">
-                    <span style={{ fontSize: 12, fontWeight: 500, color: '#e8eaf6', minWidth: 160 }}>{prompt.name}</span>
-                    <span style={{ fontSize: 10.5, color: '#9ba4c0', flex: 1 }}>{prompt.description}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-
-        <div className="section-label"><span className="ico">⚠</span> CAPABILITIES</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
-          {server.capabilities.map((cap: string) => (
-            <span key={cap} className="badge badge-cyan" style={{ fontSize: 10 }}>{cap}</span>
-          ))}
-        </div>
-
-        <div className="row" style={{ gap: 8, marginTop: 24 }}>
-          <button className="btn-primary" onClick={onClose}>Close</button>
-          <button className="btn-secondary" onClick={(e) => { e.stopPropagation(); }}>{server.status === 'connected' ? 'Disconnect' : 'Connect'}</button>
-          <button className="btn-primary" onClick={(e) => { e.stopPropagation(); }}>Test Connection</button>
-          <button className="btn-secondary" style={{ color: '#ff4d6d', borderColor: '#ff4d6d' }} onClick={(e) => { e.stopPropagation(); }}>Remove</button>
-        </div>
+          </div>
+        ))}
       </div>
-    </div>
-    </>
+
+      <div style={{ display: 'flex', gap: 'var(--spacing-2)', paddingTop: 'var(--spacing-3)', borderTop: '1px solid var(--color-border-primary)' }}>
+        <Button variant={server.status === 'connected' ? 'secondary' : 'primary'} onClick={onToggle}>
+          {server.status === 'connected' ? 'Disconnect' : 'Connect'}
+        </Button>
+        <Button variant="secondary">Configure</Button>
+        <Button variant="ghost" style={{ color: 'var(--color-error-base)', borderColor: 'var(--color-error-base)' }}>Remove</Button>
+      </div>
+    </DetailDrawer>
   )
 }
